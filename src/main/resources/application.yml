@@ -6,4 +6,3 @@ spring:
     url: jdbc:mysql://localhost:3306/DeveloperPilotProject
     username: root
     password: 00Mishr@
-
