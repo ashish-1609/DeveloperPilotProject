@@ -1,0 +1,13 @@
+package com.pilot.project.services;
+
+import com.pilot.project.payloads.HotelDTO;
+
+import java.util.List;
+
+public interface HotelService {
+    HotelDTO saveHotel(HotelDTO hotelDTO);
+    HotelDTO updateHotel(HotelDTO hotelDTO);
+    List<HotelDTO> getHotels();
+    HotelDTO getHotelById(String hotelId);
+    void deleteHotel(String hotelId);
+}

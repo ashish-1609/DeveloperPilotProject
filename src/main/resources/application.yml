@@ -3,6 +3,6 @@ spring:
     name: DeveloperPilotProject
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/DeveloperPilotProject
+    url: jdbc:mysql://localhost:3306/developerpilotproject
     username: root
     password: 00Mishr@
