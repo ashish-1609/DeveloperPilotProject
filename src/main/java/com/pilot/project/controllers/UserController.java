@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -27,7 +28,7 @@ public class UserController {
     @PostMapping("/")
     public ResponseEntity<?> saveUser(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
         if(this.userService.isUserExistByEmail(userDTO.getEmail())) {
-            return new ResponseEntity<>(new ApiResponse("", false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse("User Already Exist.", false), HttpStatus.BAD_REQUEST);
         }
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false), HttpStatus.BAD_REQUEST);
@@ -36,11 +37,38 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable String id,@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
-//        if(this.userService.isUserExistByUserid(id)) {
-//            return new
-//        }
-        return null;
+    public ResponseEntity<?> updateUser(@PathVariable String id,@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
+        if(bindingResult.hasFieldErrors()){
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false),
+                            HttpStatus.BAD_REQUEST);
+        }
+        if(this.userService.isUserExistByUserid(id)) {
+            return new ResponseEntity<>(this.userService.updateUser(id, userDTO), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(
+                new ApiResponse("User Not Exist.", false), HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return new ResponseEntity<>(this.userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
+        if(this.userService.isUserExistByUserid(id)) {
+            return new ResponseEntity<>(this.userService.getUserById(id), HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+            this.userService.deleteUser(id);
+            return new ResponseEntity<>(new ApiResponse("User deleted Successfully.", true), HttpStatus.OK);
     }
 
 }
