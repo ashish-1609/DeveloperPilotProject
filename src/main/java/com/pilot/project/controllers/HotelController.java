@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import java.util.Objects;
 @RequestMapping("/api/hotels")
 @RequiredArgsConstructor
 @Tag(name = "Hotel Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of hotels.")
-@Log4j2
 public class HotelController {
 
     private final HotelService hotelService;
@@ -37,10 +35,7 @@ public class HotelController {
     @PostMapping("/")
     public ResponseEntity<?> saveHotel(@RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            log.error("getting errors in adding user : {}",
-                    bindingResult.getFieldErrors()
-                            .stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-                            .toList());
+
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
         }
         if (this.hotelService.existByName(hotelDTO.getHotelName())) {
@@ -52,7 +47,6 @@ public class HotelController {
     @Operation(summary = "Delete Hotel By Id", description = "Delete the details of a hotel using it's ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteHotel(@PathVariable String id) {
-        log.info("deleting hotel with id : {}", id);
         this.hotelService.deleteHotel(id);
         return new ResponseEntity<>(new ApiResponse("Hotel deleted successfully", true), HttpStatus.OK);
     }
@@ -61,7 +55,6 @@ public class HotelController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateHotel(@PathVariable String id, @RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            log.error("getting errors in updating user : {}", bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
             return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(), false), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(this.hotelService.updateHotel(id, hotelDTO), HttpStatus.OK);
