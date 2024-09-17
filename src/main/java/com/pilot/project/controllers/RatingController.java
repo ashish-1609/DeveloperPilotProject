@@ -1,6 +1,5 @@
 package com.pilot.project.controllers;
 
-
 import com.pilot.project.payloads.ApiResponse;
 import com.pilot.project.payloads.RatingDTO;
 import com.pilot.project.services.RatingService;
@@ -48,6 +47,21 @@ public class RatingController {
             log.error(e.getMessage());
             return new ResponseEntity<>(new ApiResponse("Internal Server Error", false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Operation(summary = "Update Rating By Id", description = "Update the details of a Rating using it's ID, and also provide User Id, Hotel Id.")
+    @PutMapping("/user/{userId}/hotel/{hotelId}/{ratingId}")
+    public ResponseEntity<?> updateRating(
+            @PathVariable String userId,
+            @PathVariable String hotelId,
+            @PathVariable String ratingId,
+            @RequestBody @Valid RatingDTO ratingDTO,
+            BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            log.error("getting errors in Updating Rating : {}", bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
+            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(this.ratingService.updateRating(userId, hotelId,ratingId, ratingDTO), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete Rating By Id", description = "Delete the details of a Rating using it's ID.")

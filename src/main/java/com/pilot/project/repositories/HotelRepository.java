@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, String> {
     Boolean existsByHotelName(String hotelName);
-    Boolean existsByHotelId(String hotelId);
 }
