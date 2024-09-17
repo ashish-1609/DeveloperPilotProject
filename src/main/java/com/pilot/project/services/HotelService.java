@@ -10,4 +10,6 @@ public interface HotelService {
     List<HotelDTO> getHotels();
     HotelDTO getHotelById(String hotelId);
     void deleteHotel(String hotelId);
+    Boolean existByName(String hotelName);
+    Boolean existById(String hotelId);
 }

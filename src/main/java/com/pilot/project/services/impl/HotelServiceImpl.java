@@ -63,4 +63,14 @@ public class HotelServiceImpl implements HotelService {
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Hotel", "id",hotelId));
     }
+
+    @Override
+    public Boolean existByName(String hotelName) {
+        return this.hotelRepository.existsByHotelName(hotelName);
+    }
+
+    @Override
+    public Boolean existById(String hotelId) {
+        return this.hotelRepository.existsByHotelId(hotelId);
+    }
 }

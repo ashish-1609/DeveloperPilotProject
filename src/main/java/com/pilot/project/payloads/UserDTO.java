@@ -27,5 +27,5 @@ public class UserDTO {
     private String password;
     @Size(min = 0, max = 100, message = "About user must be in range of 0-100 characters.")
     private String about;
-    private List<Rating> ratings;
+//    private List<Rating> ratings;
 }

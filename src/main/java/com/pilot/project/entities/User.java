@@ -1,5 +1,6 @@
 package com.pilot.project.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,5 +22,6 @@ public class User {
     private String password;
     private String about;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Rating> ratings;
 }
