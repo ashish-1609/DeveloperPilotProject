@@ -91,7 +91,7 @@ public class RatingController {
     @Operation(summary = "Delete All Ratings By Hotel Id", description = "Delete the details of all Ratings using Hotel ID.")
     @DeleteMapping("/{hotelId}")
     public ResponseEntity<ApiResponse> deleteRatingByHotelId(@PathVariable String hotelId){
-        this.ratingService.deleteAllRatingsByUser(hotelId);
+        this.ratingService.deleteAllRatingsByHotel(hotelId);
         return new ResponseEntity<>(new ApiResponse("Ratings Deleted Successfully", true), HttpStatus.OK);
     }
 

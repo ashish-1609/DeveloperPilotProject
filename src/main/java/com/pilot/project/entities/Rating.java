@@ -16,6 +16,7 @@ public class Rating {
     @Id
     private String ratingId;
     private int rating;
+    private String comment;
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference
     private User user;

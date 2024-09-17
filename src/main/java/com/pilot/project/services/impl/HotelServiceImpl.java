@@ -43,10 +43,9 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public List<HotelDTO> getHotels() {
-        List<HotelDTO> hotelDTOS = this.hotelRepository.findAll()
+        return this.hotelRepository.findAll()
                 .stream().map(hotel -> this.modelMapper.map(hotel, HotelDTO.class))
                 .toList();
-        return hotelDTOS;
     }
 
     @Override
@@ -62,6 +61,7 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = this.hotelRepository.findById(hotelId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Hotel", "id",hotelId));
+        this.hotelRepository.delete(hotel);
     }
 
     @Override
@@ -69,8 +69,4 @@ public class HotelServiceImpl implements HotelService {
         return this.hotelRepository.existsByHotelName(hotelName);
     }
 
-    @Override
-    public Boolean existById(String hotelId) {
-        return this.hotelRepository.existsByHotelId(hotelId);
-    }
 }

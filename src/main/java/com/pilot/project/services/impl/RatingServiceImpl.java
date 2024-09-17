@@ -1,12 +1,9 @@
 package com.pilot.project.services.impl;
 
-import com.pilot.project.entities.Hotel;
 import com.pilot.project.entities.Rating;
 import com.pilot.project.entities.User;
 import com.pilot.project.exceptions.ResourceNotFoundException;
-import com.pilot.project.payloads.HotelDTO;
 import com.pilot.project.payloads.RatingDTO;
-import com.pilot.project.payloads.UserDTO;
 import com.pilot.project.repositories.HotelRepository;
 import com.pilot.project.repositories.RatingRepository;
 import com.pilot.project.repositories.UserRepository;

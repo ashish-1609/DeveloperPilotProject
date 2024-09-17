@@ -11,5 +11,5 @@ public interface HotelService {
     HotelDTO getHotelById(String hotelId);
     void deleteHotel(String hotelId);
     Boolean existByName(String hotelName);
-    Boolean existById(String hotelId);
+
 }

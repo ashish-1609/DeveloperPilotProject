@@ -1,13 +1,12 @@
 package com.pilot.project.payloads;
 
-import com.pilot.project.entities.Rating;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.List;
 
 @Getter
 @Setter
