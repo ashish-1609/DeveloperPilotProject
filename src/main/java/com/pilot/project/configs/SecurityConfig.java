@@ -53,7 +53,7 @@ public class SecurityConfig {
             request.requestMatchers("/api/ratings/**").authenticated();
             request.requestMatchers(HttpMethod.POST, "/api/users/").permitAll();
             request.anyRequest().permitAll();
-        }).formLogin(AbstractAuthenticationFilterConfigurer::permitAll).exceptionHandling(Logger::error);
+        }).formLogin(form->form.loginPage("/login").loginProcessingUrl("/login").permitAll().defaultSuccessUrl("/swagger-ui.html")).exceptionHandling(Logger::error);
         http.authenticationProvider(daoAuthenticationProvider());
         return http.build();
     }
