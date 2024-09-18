@@ -7,6 +7,7 @@ import com.pilot.project.repositories.UserRepository;
 import com.pilot.project.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,16 +18,19 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
         userDTO.setUserId(UUID.randomUUID().toString());
+        userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         User user = this.userRepository.save(
                 this.modelMapper.map(userDTO, User.class)
         );
@@ -41,7 +45,7 @@ public class UserServiceImpl implements UserService {
                 );
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         user.setAbout(userDTO.getAbout());
         return this.modelMapper.map(
                 this.userRepository.save(user), UserDTO.class
