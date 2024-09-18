@@ -1,16 +1,17 @@
 package com.pilot.project.configs;
 
 import com.pilot.project.services.impl.UserDetailsServiceImpl;
-import lombok.RequiredArgsConstructor;
-import org.springdoc.webmvc.core.service.RequestService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,10 +19,9 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final RequestService requestBuilder;
+    private final static Logger Logger= LogManager.getLogger(SecurityConfig.class);
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -48,14 +48,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable).authorizeRequests(request->{
-            request.requestMatchers("/swagger-ui.html").permitAll();
-            request.requestMatchers("/swagger-ui/**").permitAll();
-            request.requestMatchers("/api/users/**").permitAll();
-            request.anyRequest().authenticated();
-        });
-        http.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer.loginPage("/login").defaultSuccessUrl("/swagger-ui.html").permitAll());
-//        http.authenticationProvider(daoAuthenticationProvider());
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request->{
+            request.requestMatchers("/api/hotels/**").authenticated();
+            request.requestMatchers("/api/ratings/**").authenticated();
+            request.requestMatchers(HttpMethod.POST, "/api/users/").permitAll();
+            request.anyRequest().permitAll();
+        }).formLogin(AbstractAuthenticationFilterConfigurer::permitAll).exceptionHandling(Logger::error);
+        http.authenticationProvider(daoAuthenticationProvider());
         return http.build();
     }
 
