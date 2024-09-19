@@ -5,6 +5,7 @@ import com.pilot.project.payloads.UserDTO;
 import com.pilot.project.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
+@Rollback(false)
 class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
@@ -53,6 +56,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Order(1)
     void saveUser() {
         when(bCryptPasswordEncoder.encode(any())).thenReturn("encoded");
         when(modelMapper.map(userDTO, User.class)).thenReturn(user);
@@ -69,6 +73,7 @@ class UserServiceImplTest {
 
 
     @Test
+    @Order(2)
     void updateUser() {
         when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
         when(bCryptPasswordEncoder.encode(userDTO.getPassword())).thenReturn("encoded");
@@ -82,6 +87,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Order(3)
     void getUserById() {
         when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
@@ -92,6 +98,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Order(4)
     void getAllUsers() {
         userList.add(user);
         when(this.userRepository.findAll()).thenReturn(List.of(user));
@@ -102,6 +109,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Order(5)
     void deleteUser() {
         when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
         assertDoesNotThrow(() -> this.userService.deleteUser(userDTO.getUserId()));
@@ -109,6 +117,7 @@ class UserServiceImplTest {
     }
 
     @Test
+    @Order(6)
     void isUserExistByEmail() {
         when(this.userRepository.existsByEmail(userDTO.getEmail())).thenReturn(Boolean.TRUE);
         assertTrue(this.userService.isUserExistByEmail(userDTO.getEmail()));

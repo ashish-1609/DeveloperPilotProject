@@ -19,7 +19,7 @@ import java.util.Objects;
 @CrossOrigin
 @RequestMapping("/api/users")
 @Tag(name = "User Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of users.")
-public class UserController {
+public class    UserController {
 
     private final UserService userService;
 

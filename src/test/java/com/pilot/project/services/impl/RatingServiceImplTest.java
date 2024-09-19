@@ -11,12 +11,14 @@ import com.pilot.project.repositories.RatingRepository;
 import com.pilot.project.repositories.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.test.annotation.Rollback;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.util.List;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Rollback(value = false)
 class RatingServiceImplTest {
 
     private Rating rating;
@@ -93,6 +96,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(1)
     void saveRating() {
         when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.ofNullable(user));
 //        when(this.modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
@@ -111,6 +115,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(2)
     void updateRating() {
         when(this.ratingRepository.findById(ratingDTO.getRatingId())).thenReturn(Optional.of(rating));
         when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.ofNullable(user));
@@ -127,6 +132,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(3)
     void deleteRating() {
         when(this.ratingRepository.findById(ratingDTO.getRatingId())).thenReturn(Optional.of(rating));
         assertDoesNotThrow(()-> this.ratingService.deleteRating(ratingDTO.getRatingId()));
@@ -134,6 +140,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(4)
     void getRatings() {
         List<Rating> ratings = List.of(rating);
         when(this.ratingRepository.findAll()).thenReturn(ratings);
@@ -144,6 +151,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(5)
     void getRatingById() {
         when(this.ratingRepository.findById(ratingDTO.getRatingId())).thenReturn(Optional.of(rating));
         when(this.modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
@@ -154,6 +162,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(6)
     void findAllRatingsByUser() {
          List<Rating> ratings = List.of(rating);
          when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.of(user));
@@ -165,6 +174,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(7)
     void findAllRatingsByHotel() {
         List<Rating> ratings = List.of(rating);
         when(this.hotelRepository.findById(hotel.getHotelId())).thenReturn(Optional.of(hotel));
@@ -176,6 +186,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(8)
     void deleteAllRatingsByUser() {
         List<Rating> allByUser = this.ratingRepository.findAllByUser(user);
         when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
@@ -185,6 +196,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(9)
     void deleteAllRatingsByHotel() {
         List<Rating> allByHotel = this.ratingRepository.findAllByHotel(hotel);
         when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
@@ -194,6 +206,7 @@ class RatingServiceImplTest {
     }
 
     @Test
+    @Order(10)
     void deleteAllRatings() {
         assertDoesNotThrow(()->this.ratingService.deleteAllRatings());
         verify(ratingRepository, times(1)).deleteAll();

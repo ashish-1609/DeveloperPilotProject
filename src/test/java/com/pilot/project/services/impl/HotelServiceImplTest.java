@@ -4,12 +4,14 @@ import com.pilot.project.entities.Hotel;
 import com.pilot.project.payloads.HotelDTO;
 import com.pilot.project.repositories.HotelRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Rollback(false)
 class HotelServiceImplTest {
 
     private Hotel hotel;
@@ -55,6 +58,7 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @Order(1)
     void saveHotel() {
         when(this.modelMapper.map(hotelDTO, Hotel.class)).thenReturn(hotel);
         when(this.hotelRepository.save(any(Hotel.class))).thenReturn(hotel);
@@ -70,6 +74,7 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @Order(2)
     void updateHotel() {
         when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
         when(this.hotelRepository.save(any(Hotel.class))).thenReturn(hotel);
@@ -83,6 +88,7 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @Order(3)
     void getHotels() {
         hotelList.add(hotel);
         when(this.hotelRepository.findAll()).thenReturn(hotelList);
@@ -93,6 +99,7 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @Order(4)
     void getHotelById() {
         when(hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
         when(modelMapper.map(hotel, HotelDTO.class)).thenReturn(hotelDTO);
@@ -104,6 +111,7 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @Order(5)
     void deleteHotel() {
         when(hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
         assertDoesNotThrow(() -> hotelService.deleteHotel(hotelDTO.getHotelId()));
@@ -111,6 +119,7 @@ class HotelServiceImplTest {
     }
 
     @Test
+    @Order(6)
     void existByName() {
         when(this.hotelRepository.existsByHotelName(hotelDTO.getHotelName())).thenReturn(Boolean.TRUE);
         assertTrue(this.hotelRepository.existsByHotelName(hotelDTO.getHotelName()));
