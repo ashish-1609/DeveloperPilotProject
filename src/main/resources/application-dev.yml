@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: DeveloperPilotProject
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/developerpilotproject
+    username: root
+    password: 00Mishr@
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

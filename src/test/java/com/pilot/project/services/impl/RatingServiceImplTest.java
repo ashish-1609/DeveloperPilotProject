@@ -9,7 +9,6 @@ import com.pilot.project.payloads.UserDTO;
 import com.pilot.project.repositories.HotelRepository;
 import com.pilot.project.repositories.RatingRepository;
 import com.pilot.project.repositories.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
