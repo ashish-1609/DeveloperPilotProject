@@ -3,7 +3,6 @@ package com.pilot.project.services.impl;
 import com.pilot.project.entities.User;
 import com.pilot.project.payloads.UserDTO;
 import com.pilot.project.repositories.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

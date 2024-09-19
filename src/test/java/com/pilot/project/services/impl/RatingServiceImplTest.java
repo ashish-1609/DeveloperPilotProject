@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.test.annotation.Rollback;
 
-import java.lang.management.GarbageCollectorMXBean;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -88,11 +87,6 @@ class RatingServiceImplTest {
         rating.setUser(user);
         rating.setHotel(hotel);
 
-    }
-
-    @AfterEach
-    void tearDown() throws Throwable {
-        System.gc();
     }
 
     @Test
