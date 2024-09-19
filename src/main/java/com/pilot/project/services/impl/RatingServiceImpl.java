@@ -90,13 +90,16 @@ public class RatingServiceImpl implements RatingService  {
 
     @Override
     public void deleteAllRatingsByUser(String userId) {
+
         User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-        this.ratingRepository.deleteAllByUser(user);
+        List<Rating> allByUser = this.ratingRepository.findAllByUser(user);
+        this.ratingRepository.deleteAll(allByUser);
     }
 
     @Override
     public void deleteAllRatingsByHotel(String hotelId) {
-        this.ratingRepository.deleteAllByHotel(this.hotelRepository.findById(hotelId).orElseThrow(() -> new ResourceNotFoundException("Hotel", "id", hotelId)));
+        List<Rating> ratings = this.ratingRepository.findAllByHotel(this.hotelRepository.findById(hotelId).orElseThrow(() -> new ResourceNotFoundException("Hotel", "id", hotelId)));
+        this.ratingRepository.deleteAll(ratings);
     }
 
     @Override

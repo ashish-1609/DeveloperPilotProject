@@ -12,6 +12,4 @@ import java.util.List;
 public interface RatingRepository extends JpaRepository<Rating, String> {
     List<Rating> findAllByUser(User user);
     List<Rating> findAllByHotel(Hotel hotel);
-    void deleteAllByUser(User user);
-    void deleteAllByHotel(Hotel hotel);
 }
