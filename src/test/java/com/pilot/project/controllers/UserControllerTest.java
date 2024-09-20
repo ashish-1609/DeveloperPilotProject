@@ -12,11 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +60,7 @@ class UserControllerTest {
         ResponseEntity<?> responseEntity = this.userController.saveUser(userDTO, bindingResult);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("Invalid email", ((ApiResponse)responseEntity.getBody()).getMessage());
+        assertEquals("Invalid email", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
 
 //        verify(this.userController, times(1)).saveUser(userDTO, bindingResult);
     }
@@ -71,12 +72,12 @@ class UserControllerTest {
 
         ResponseEntity<?> responseEntity = this.userController.saveUser(userDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("User Already Exist.", ((ApiResponse)responseEntity.getBody()).getMessage());
+        assertEquals("User Already Exist.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
         verify(this.userService, times(1)).isUserExistByEmail(userDTO.getEmail());
     }
 
     @Test
-    public void saveUser_validUser() throws Exception {
+    public void saveUser_validUser() {
         when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
         when(this.userService.saveUser(userDTO)).thenReturn(userDTO);
 
@@ -121,7 +122,7 @@ class UserControllerTest {
     void deleteUser() {
         ResponseEntity<?> responseEntity = this.userController.deleteUser(userDTO.getUserId());
         verify(this.userService, times(1)).deleteUser(userDTO.getUserId());
-        assertEquals("User deleted Successfully.", ((ApiResponse)responseEntity.getBody()).getMessage());
+        assertEquals("User deleted Successfully.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
 
     }
 }

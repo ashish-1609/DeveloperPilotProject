@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +58,7 @@ class HotelControllerTest {
         when(this.hotelService.existByName(hotelDTO.getHotelName())).thenReturn(true);
         ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("Hotel already exists with this name: " +hotelDTO.getHotelName(), ((ApiResponse)responseEntity.getBody()).getMessage());
+        assertEquals("Hotel already exists with this name: " +hotelDTO.getHotelName(), ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 
     @Test
@@ -75,14 +76,14 @@ class HotelControllerTest {
         when(bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("Hotel","hotelName","Hotel's name cannot be empty.")));
         ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals(List.of("Hotel's name cannot be empty.").toString(),((ApiResponse)responseEntity.getBody()).getMessage());
+        assertEquals(List.of("Hotel's name cannot be empty.").toString(),((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 
     @Test
     void deleteHotel() {
         ResponseEntity<ApiResponse> apiResponseResponseEntity = this.hotelController.deleteHotel(hotelDTO.getHotelId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
-        assertEquals("Hotel deleted successfully", ((ApiResponse) apiResponseResponseEntity.getBody()).getMessage());
+        assertEquals("Hotel deleted successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
 
     }
 
