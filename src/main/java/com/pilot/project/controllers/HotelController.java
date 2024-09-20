@@ -39,7 +39,7 @@ public class HotelController {
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
         }
         if (this.hotelService.existByName(hotelDTO.getHotelName())) {
-            return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getHotelName(), false), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getHotelName(), false), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(this.hotelService.saveHotel(hotelDTO), HttpStatus.OK);
     }
