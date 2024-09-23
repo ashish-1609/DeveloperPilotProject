@@ -15,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final String USER = "User";
+    private static final String ID = "ID";
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService {
     public UserDTO updateUser(String id, UserDTO userDTO) {
         User user = this.userRepository.findById(id)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("User", "id",id )
+                        () -> new ResourceNotFoundException(USER, ID, id)
                 );
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getUserById(String id) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
         return this.modelMapper.map(user, UserDTO.class);
     }
 
@@ -66,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(String id) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
         this.userRepository.delete(user);
     }
 

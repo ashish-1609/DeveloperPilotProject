@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/ratings")
 @Tag(name = "Rating Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of Ratings.")
@@ -32,17 +31,16 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
-
     @Operation(summary = "Add Rating", description = "Add Rating in the system, and provide the user id and hotel id.")
     @PostMapping("/user/{userId}/hotel/{hotelId}")
-    public ResponseEntity<?> saveRating(@PathVariable String userId, @PathVariable String hotelId, @RequestBody @Valid RatingDTO ratingDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse> saveRating(@PathVariable String userId, @PathVariable String hotelId, @RequestBody @Valid RatingDTO ratingDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(
                     DefaultMessageSourceResolvable::getDefaultMessage
             ).toList().toString(),false), HttpStatus.BAD_REQUEST);
         }
         try{
-            return new ResponseEntity<>(this.ratingService.saveRating(userId, hotelId, ratingDTO), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse("Rating Added Successfully", true,this.ratingService.saveRating(userId, hotelId, ratingDTO)), HttpStatus.OK);
         }catch(Exception e){
             return new ResponseEntity<>(new ApiResponse("Internal Server Error", false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -50,7 +48,7 @@ public class RatingController {
 
     @Operation(summary = "Update Rating By Id", description = "Update the details of a Rating using it's ID, and also provide User Id, Hotel Id.")
     @PutMapping("/user/{userId}/hotel/{hotelId}/{ratingId}")
-    public ResponseEntity<?> updateRating(
+    public ResponseEntity<ApiResponse> updateRating(
             @PathVariable String userId,
             @PathVariable String hotelId,
             @PathVariable String ratingId,
@@ -59,12 +57,12 @@ public class RatingController {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(this.ratingService.updateRating(userId, hotelId,ratingId, ratingDTO), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Rating Updated Successfully",true,this.ratingService.updateRating(userId, hotelId,ratingId, ratingDTO)), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete Rating By Id", description = "Delete the details of a Rating using it's ID.")
     @DeleteMapping("/{ratingId}")
-    public ResponseEntity<?> deleteRating(@PathVariable String ratingId) {
+    public ResponseEntity<ApiResponse> deleteRating(@PathVariable String ratingId) {
         this.ratingService.deleteRating(ratingId);
         return new ResponseEntity<>(new ApiResponse("Rating Deleted Successfully", true), HttpStatus.OK);
     }

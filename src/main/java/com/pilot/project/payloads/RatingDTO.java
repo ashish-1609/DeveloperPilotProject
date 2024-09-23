@@ -10,12 +10,13 @@ import org.hibernate.validator.constraints.Range;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Builder
 public class RatingDTO {
     private String ratingId;
     @Range(min = 0, max = 10, message = "Hotel can be rated only in range of 0-10.")
     @NotNull(message = "Rating Field Cannot be Blank.")
-    private int rating;
+    private int points;
     @Size(min = 2, max = 100, message = "Comment Should be in between 2-100 characters.")
     @NotBlank(message = "Comment Field Cannot be empty.")
     private String comment;

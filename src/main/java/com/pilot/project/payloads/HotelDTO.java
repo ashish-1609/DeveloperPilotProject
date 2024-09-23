@@ -20,6 +20,5 @@ public class HotelDTO {
     private String hotelAddress;
     @NotBlank(message = "Hotel's city cannot be empty.")
     private String hotelCity;
-//    private List<Rating> ratings;
 
 }

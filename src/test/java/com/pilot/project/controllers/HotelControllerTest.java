@@ -54,7 +54,7 @@ class HotelControllerTest {
     }
 
     @Test
-    public void saveHotel_HotelExist(){
+    void saveHotel_HotelExist(){
         when(this.hotelService.existByName(hotelDTO.getHotelName())).thenReturn(true);
         ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -63,15 +63,16 @@ class HotelControllerTest {
 
     @Test
     void saveHotel() {
+        ApiResponse apiResponse = new ApiResponse("Hotel Added Successfully", true, hotelDTO);
         when(this.hotelService.existByName(hotelDTO.getHotelName())).thenReturn(false);
         when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.hotelService.saveHotel(hotelDTO)).thenReturn(hotelDTO);
         ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(hotelDTO, responseEntity.getBody());
+        assertEquals(apiResponse, responseEntity.getBody());
     }
     @Test
-    public void saveHotel_InvalidHotel(){
+    void saveHotel_InvalidHotel(){
         when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("Hotel","hotelName","Hotel's name cannot be empty.")));
         ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
@@ -84,18 +85,16 @@ class HotelControllerTest {
         ResponseEntity<ApiResponse> apiResponseResponseEntity = this.hotelController.deleteHotel(hotelDTO.getHotelId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
         assertEquals("Hotel deleted successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
-
     }
 
     @Test
     void updateHotel() {
+        ApiResponse apiResponse = new ApiResponse("Hotel Updated Successfully", true, hotelDTO);
         when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.hotelService.updateHotel(hotelDTO.getHotelId(), hotelDTO)).thenReturn(hotelDTO);
         ResponseEntity<?> responseEntity = this.hotelController.updateHotel(hotelDTO.getHotelId(), hotelDTO, bindingResult);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(hotelDTO, responseEntity.getBody());
-
-
+        assertEquals(apiResponse, responseEntity.getBody());
     }
 
     @Test

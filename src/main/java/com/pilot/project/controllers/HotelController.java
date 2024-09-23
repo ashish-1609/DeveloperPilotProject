@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/hotels")
 @RequiredArgsConstructor
 @Tag(name = "Hotel Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of hotels.")
@@ -33,7 +32,7 @@ public class HotelController {
 
     @Operation(summary = "Add Hotel", description = "Add hotel in the system.")
     @PostMapping("/")
-    public ResponseEntity<?> saveHotel(@RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse> saveHotel(@RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
 
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
@@ -41,7 +40,7 @@ public class HotelController {
         if (this.hotelService.existByName(hotelDTO.getHotelName())) {
             return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getHotelName(), false), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(this.hotelService.saveHotel(hotelDTO), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Hotel Added Successfully",true, this.hotelService.saveHotel(hotelDTO)), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete Hotel By Id", description = "Delete the details of a hotel using it's ID.")
@@ -53,11 +52,11 @@ public class HotelController {
 
     @Operation(summary = "Update Hotel By Id", description = "Update the details of a hotel using it's ID.")
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateHotel(@PathVariable String id, @RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse> updateHotel(@PathVariable String id, @RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(), false), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(this.hotelService.updateHotel(id, hotelDTO), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Hotel Updated Successfully", true, this.hotelService.updateHotel(id, hotelDTO)), HttpStatus.OK);
     }
 
     @Operation(summary = "Get the Hotel by Id", description = "Fetch details of the Hotel by it's ID.")

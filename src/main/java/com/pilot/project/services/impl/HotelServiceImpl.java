@@ -14,6 +14,10 @@ import java.util.UUID;
 
 @Service
 public class HotelServiceImpl implements HotelService {
+
+    private static final String HOTEL = "Hotel";
+    private static final String ID = "ID";
+
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
 
@@ -34,7 +38,7 @@ public class HotelServiceImpl implements HotelService {
     public HotelDTO updateHotel(String id, HotelDTO hotelDTO) {
         Hotel hotel = this.hotelRepository.findById(id)
                 .orElseThrow(
-                    () -> new ResourceNotFoundException("Hotel", "id", id));
+                    () -> new ResourceNotFoundException(HOTEL, ID, id));
         hotel.setHotelName(hotelDTO.getHotelName());
         hotel.setHotelAddress(hotelDTO.getHotelAddress());
         hotel.setHotelCity(hotelDTO.getHotelCity());
@@ -52,7 +56,7 @@ public class HotelServiceImpl implements HotelService {
     public HotelDTO getHotelById(String hotelId) {
         Hotel hotel = this.hotelRepository.findById(hotelId)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Hotel", "id",hotelId));
+                        () -> new ResourceNotFoundException(HOTEL, ID,hotelId));
         return this.modelMapper.map(hotel, HotelDTO.class);
     }
 
@@ -60,7 +64,7 @@ public class HotelServiceImpl implements HotelService {
     public void deleteHotel(String hotelId) {
         Hotel hotel = this.hotelRepository.findById(hotelId)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Hotel", "id",hotelId));
+                        () -> new ResourceNotFoundException(HOTEL, ID,hotelId));
         this.hotelRepository.delete(hotel);
     }
 

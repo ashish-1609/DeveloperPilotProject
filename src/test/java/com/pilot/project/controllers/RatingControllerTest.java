@@ -56,7 +56,7 @@ class RatingControllerTest {
                 .build();
         ratingDTO=RatingDTO.builder()
                 .ratingId(UUID.randomUUID().toString())
-                .rating(10)
+                .points(10)
                 .user(userDTO)
                 .hotel(hotelDTO)
                 .build();
@@ -64,16 +64,17 @@ class RatingControllerTest {
 
     @Test
     void saveRating() {
+        ApiResponse apiResponse = new ApiResponse("Rating Added Successfully", true, ratingDTO);
         when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.ratingService.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO)).thenReturn(ratingDTO);
         ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(ratingDTO, responseEntity.getBody());
+        assertEquals(apiResponse, responseEntity.getBody());
 
     }
 
     @Test
-    public void saveRating_InvalidRating(){
+    void saveRating_InvalidRating(){
         when(this.bindingResult.hasErrors()).thenReturn(true);
         when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "rating", "Hotel can be rated only in range of 0-10.")));
         ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
@@ -83,11 +84,17 @@ class RatingControllerTest {
 
     @Test
     void updateRating() {
+        ApiResponse apiResponse = new ApiResponse("Rating Updated Successfully", true, ratingDTO);
         when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.ratingService.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO)).thenReturn(ratingDTO);
+
         ResponseEntity<?> responseEntity = this.ratingController.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO, bindingResult);
+        if(bindingResult.hasErrors()){
+            assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        }else{
+            assertEquals(apiResponse, responseEntity.getBody());
+        }
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(ratingDTO, responseEntity.getBody());
     }
 
     @Test

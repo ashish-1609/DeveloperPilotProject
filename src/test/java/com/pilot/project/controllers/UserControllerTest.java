@@ -61,12 +61,10 @@ class UserControllerTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("Invalid email", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
-
-//        verify(this.userController, times(1)).saveUser(userDTO, bindingResult);
     }
 
     @Test
-    public void saveUser_UserExist(){
+    void saveUser_UserExist(){
         userDTO.setEmail("test@email.com");
         when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(true);
 
@@ -77,22 +75,25 @@ class UserControllerTest {
     }
 
     @Test
-    public void saveUser_validUser() {
+    void saveUser_validUser() {
+        when(this.bindingResult.hasErrors()).thenReturn(false);
+        ApiResponse apiResponse = new ApiResponse("User Added Successfully", true, userDTO);
         when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
         when(this.userService.saveUser(userDTO)).thenReturn(userDTO);
 
         ResponseEntity<?> responseEntity= this.userController.saveUser(userDTO, bindingResult);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(userDTO, responseEntity.getBody());
+        assertEquals(apiResponse, responseEntity.getBody());
 
     }
 
     @Test
     void updateUser() {
+        ApiResponse apiResponse = new ApiResponse("User Updated Successfully", true, userDTO);
         when(this.userService.updateUser(userDTO.getUserId(), userDTO)).thenReturn(userDTO);
         ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getUserId(), userDTO, bindingResult);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(userDTO, responseEntity.getBody());
+        assertEquals(apiResponse, responseEntity.getBody());
     }
 
     @Test
@@ -106,7 +107,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void getUserById() {
+    void getUserById() {
         lenient().when(this.userService.getUserById(userDTO.getUserId())).thenReturn(userDTO);
         ResponseEntity<UserDTO> responseEntity = this.userController.getUserById(userDTO.getUserId());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -114,8 +115,6 @@ class UserControllerTest {
         }else{
             assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         }
-
-//        verify(this.userService, times(1)).getUserById(userDTO.getUserId());
     }
 
     @Test

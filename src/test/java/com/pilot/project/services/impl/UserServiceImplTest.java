@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-@Rollback(false)
+@Rollback(value = false)
 class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
@@ -121,6 +121,12 @@ class UserServiceImplTest {
         when(this.userRepository.existsByEmail(userDTO.getEmail())).thenReturn(Boolean.TRUE);
         assertTrue(this.userService.isUserExistByEmail(userDTO.getEmail()));
         verify(this.userRepository, times(1)).existsByEmail(userDTO.getEmail());
+    }
+
+    @Test
+    void isUserExistByUserid(){
+        when(this.userRepository.existsById(userDTO.getUserId())).thenReturn(Boolean.TRUE);
+        assertTrue(this.userService.isUserExistByUserid(userDTO.getUserId()));
     }
 
 }

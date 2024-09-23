@@ -15,7 +15,7 @@ import lombok.Setter;
 public class Rating {
     @Id
     private String ratingId;
-    private int rating;
+    private int points;
     private String comment;
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonBackReference

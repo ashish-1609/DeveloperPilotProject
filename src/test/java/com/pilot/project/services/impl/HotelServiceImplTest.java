@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@Rollback(false)
+@Rollback(value = false)
 class HotelServiceImplTest {
 
     private Hotel hotel;

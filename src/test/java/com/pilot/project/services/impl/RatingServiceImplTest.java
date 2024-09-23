@@ -75,14 +75,14 @@ class RatingServiceImplTest {
 
         ratingDTO=RatingDTO.builder()
                 .ratingId(UUID.randomUUID().toString())
-                .rating(10)
+                .points(10)
                 .user(userDTO)
                 .hotel(hotelDTO)
                 .build();
 
         rating=new Rating();
         rating.setRatingId(UUID.randomUUID().toString());
-        rating.setRating(10);
+        rating.setPoints(10);
         rating.setUser(user);
         rating.setHotel(hotel);
 
@@ -92,9 +92,7 @@ class RatingServiceImplTest {
     @Order(1)
     void saveRating() {
         when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.ofNullable(user));
-//        when(this.modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
         when(this.hotelRepository.findById(hotel.getHotelId())).thenReturn(Optional.of(hotel));
-//        when(this.modelMapper.map(hotel, HotelDTO.class)).thenReturn(hotelDTO);
         when(modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
         when(this.ratingRepository.save(rating)).thenReturn(rating);
         when(this.modelMapper.map(ratingDTO,Rating.class)).thenReturn(rating);
@@ -102,7 +100,7 @@ class RatingServiceImplTest {
         RatingDTO ratingDTO1 = this.ratingService.saveRating(user.getUserId(), hotel.getHotelId(), ratingDTO);
         assertNotNull(ratingDTO1);
         assertEquals(ratingDTO.getRatingId(),ratingDTO1.getRatingId());
-        assertEquals(ratingDTO.getRating(),ratingDTO1.getRating());
+        assertEquals(ratingDTO.getPoints(),ratingDTO1.getPoints());
         verify(ratingRepository, times(1)).save(rating);
 
     }
@@ -119,7 +117,7 @@ class RatingServiceImplTest {
         RatingDTO savedRating = this.ratingService.updateRating(user.getUserId(), hotel.getHotelId(),ratingDTO.getRatingId(), ratingDTO);
         assertNotNull(savedRating);
         assertEquals(ratingDTO.getRatingId(),savedRating.getRatingId());
-        assertEquals(ratingDTO.getRating(),savedRating.getRating());
+        assertEquals(ratingDTO.getPoints(),savedRating.getPoints());
         verify(ratingRepository, times(1)).save(rating);
 
     }

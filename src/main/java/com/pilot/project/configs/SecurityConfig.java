@@ -11,7 +11,6 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 
-    private final static Logger Logger= LogManager.getLogger(SecurityConfig.class);
+    private static final Logger Logger= LogManager.getLogger(SecurityConfig.class);
 
 
     @Bean
@@ -49,7 +48,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request->{
+        http.authorizeHttpRequests(request->{
             request.requestMatchers("/api/hotels/**").authenticated();
             request.requestMatchers("/api/ratings/**").authenticated();
             request.requestMatchers(HttpMethod.POST, "/api/users/").permitAll();
