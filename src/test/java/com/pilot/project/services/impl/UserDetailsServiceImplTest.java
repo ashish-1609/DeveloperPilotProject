@@ -46,13 +46,18 @@ class UserDetailsServiceImplTest {
     @Test
     void loadUserByUsername_UserDoesNotExist() {
         when(this.userRepository.findUserByEmail(user.getEmail())).thenReturn(Optional.empty());
-        assertThrows(UsernameNotFoundException.class, () -> this.userDetailsServiceImpl.loadUserByUsername(user.getEmail()));
+        assertThrows(UsernameNotFoundException.class,this::loadUserByUsernameForTest);
     }
-
+    void loadUserByUsernameForTest() {
+        this.userDetailsServiceImpl.loadUserByUsername(user.getEmail());
+    }
     @Test
     void loadUserByUsername_NullUser() {
-        when(this.userRepository.findUserByEmail("xja@gmail.com")).thenReturn(Optional.empty());
-        assertThrows(UsernameNotFoundException.class, () -> this.userDetailsServiceImpl.loadUserByUsername("xja@gmail.com"));
+        when(this.userRepository.findUserByEmail(null)).thenReturn(Optional.empty());
+        assertThrows(UsernameNotFoundException.class,this::loadUserByUsernameForTest_NullUser);
 
+    }
+    private void loadUserByUsernameForTest_NullUser() {
+        this.userDetailsServiceImpl.loadUserByUsername(null);
     }
 }

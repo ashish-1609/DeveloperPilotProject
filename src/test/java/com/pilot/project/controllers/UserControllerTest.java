@@ -100,7 +100,6 @@ class UserControllerTest {
         when(this.bindingResult.hasErrors()).thenReturn(true);
         when(this.bindingResult.getFieldError()).thenReturn(new FieldError("user", "name", "User's name cannot be empty."));
         ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getUserId(), userDTO, bindingResult);
-//        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("User's name cannot be empty.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 

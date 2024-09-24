@@ -52,10 +52,6 @@ class CustomUserDetailsTest {
         assertEquals(user.getPassword(), password);
 
     }
-    @Test
-    void getAuthorities(){
-
-    }
 
     @Test
     void getAuthorities_WithMultipleRoles_ReturnsAuthorities() {
