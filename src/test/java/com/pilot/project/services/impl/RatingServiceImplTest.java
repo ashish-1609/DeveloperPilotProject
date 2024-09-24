@@ -3,6 +3,7 @@ package com.pilot.project.services.impl;
 import com.pilot.project.entities.Hotel;
 import com.pilot.project.entities.Rating;
 import com.pilot.project.entities.User;
+import com.pilot.project.exceptions.ResourceNotFoundException;
 import com.pilot.project.payloads.HotelDTO;
 import com.pilot.project.payloads.RatingDTO;
 import com.pilot.project.payloads.UserDTO;
@@ -90,7 +91,7 @@ class RatingServiceImplTest {
 
     @Test
     @Order(1)
-    void saveRating() {
+    void saveRating_WhenUserIsValid() {
         when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.ofNullable(user));
         when(this.hotelRepository.findById(hotel.getHotelId())).thenReturn(Optional.of(hotel));
         when(modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
@@ -106,8 +107,16 @@ class RatingServiceImplTest {
     }
 
     @Test
+    void saveUser_WhenUserNotFound(){
+        when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::saveRating);
+    }
+    private void saveRating() {
+        ratingService.saveRating(user.getUserId(), hotel.getHotelId(), ratingDTO);
+    }
+    @Test
     @Order(2)
-    void updateRating() {
+    void updateRating_WhenUserFound() {
         when(this.ratingRepository.findById(ratingDTO.getRatingId())).thenReturn(Optional.of(rating));
         when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.ofNullable(user));
         when(this.hotelRepository.findById(hotel.getHotelId())).thenReturn(Optional.of(hotel));
@@ -121,7 +130,14 @@ class RatingServiceImplTest {
         verify(ratingRepository, times(1)).save(rating);
 
     }
-
+    @Test
+    void updateRating_WhenRatingNotFound(){
+        when(this.ratingRepository.findById(ratingDTO.getRatingId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::updateRating);
+    }
+    private void updateRating(){
+        this.ratingService.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO);
+    }
     @Test
     @Order(3)
     void deleteRating() {
@@ -151,6 +167,15 @@ class RatingServiceImplTest {
         assertEquals(ratingDTO.getRatingId(), ratingById.getRatingId());
         verify(ratingRepository, times(1)).findById(ratingDTO.getRatingId());
     }
+    @Test
+    void getRatingById_WhenRatingNotFound(){
+        when(this.ratingRepository.findById(ratingDTO.getRatingId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::getRatingByIdForTest );
+    }
+
+    private void getRatingByIdForTest(){
+        this.ratingService.getRatingById(ratingDTO.getRatingId());
+    }
 
     @Test
     @Order(6)
@@ -163,6 +188,14 @@ class RatingServiceImplTest {
         assertEquals(allRatingsByUser.size(),ratings.size());
         verify(ratingRepository, times(1)).findAllByUser(user);
     }
+    @Test
+    void findAllRatingsByUser_WhenUserNotFound(){
+        when(this.userRepository.findById(user.getUserId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class,this::findAllRatingsByUserForTest);
+    }
+    private void findAllRatingsByUserForTest(){
+        this.ratingService.findAllRatingsByUser(userDTO.getUserId());
+    }
 
     @Test
     @Order(7)
@@ -174,6 +207,14 @@ class RatingServiceImplTest {
         assertNotNull(allRatingsByHotel);
         assertEquals(allRatingsByHotel.size(),ratings.size());
         verify(ratingRepository, times(1)).findAllByHotel(hotel);
+    }
+    @Test
+    void findAllRatingsByHotel_WhenHotelNotFound(){
+        when(this.hotelRepository.findById(hotel.getHotelId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class,this::findAllRatingsByHotelForTest);
+    }
+    private void findAllRatingsByHotelForTest(){
+        this.ratingService.findAllRatingsByHotel(hotelDTO.getHotelId());
     }
 
     @Test

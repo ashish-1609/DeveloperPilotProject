@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.util.List;
 import java.util.Objects;
@@ -76,10 +77,19 @@ class RatingControllerTest {
     @Test
     void saveRating_InvalidRating(){
         when(this.bindingResult.hasErrors()).thenReturn(true);
-        when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "rating", "Hotel can be rated only in range of 0-10.")));
+        when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "points", "Hotel can be rated only in range of 0-10.")));
         ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(List.of("Hotel can be rated only in range of 0-10.").toString(), ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
+    }
+    @Test
+    void saveRating_InternalServerError(){
+        ApiResponse apiResponse = new ApiResponse("Internal Server Error", false);
+        when(this.bindingResult.hasErrors()).thenReturn(false);
+        when(this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult)).thenThrow(HttpServerErrorException.InternalServerError.class);
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, apiResponseResponseEntity.getStatusCode());
+        assertEquals(apiResponse, apiResponseResponseEntity.getBody());
     }
 
     @Test
@@ -95,6 +105,15 @@ class RatingControllerTest {
             assertEquals(apiResponse, responseEntity.getBody());
         }
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void updateRating_InvalidRating(){
+        when(this.bindingResult.hasErrors()).thenReturn(true);
+        when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "points", "Hotel can be rated in range of 0-10.")));
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO, bindingResult);
+        assertEquals(HttpStatus.BAD_REQUEST, apiResponseResponseEntity.getStatusCode());
+        assertEquals(List.of("Hotel can be rated in range of 0-10.").toString(),((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }
 
     @Test
@@ -146,7 +165,8 @@ class RatingControllerTest {
 
     @Test
     void deleteRatingByHotelId() {
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.deleteRatingByUserId(hotelDTO.getHotelId());
+
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.deleteRatingByHotelId(hotelDTO.getHotelId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
         assertEquals("Ratings Deleted Successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }

@@ -13,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,21 +41,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 username=this.jwtTokenHelper.getUsernameFromToken(jwtToken);
             }
             catch(IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
+                logger.error("Unable to get JWT Token");
                 throw new IllegalArgumentException("Unable to get JWT Token");
             }
             catch(ExpiredJwtException e) {
-                System.out.println("Expired JWT Token");
+                logger.error("Expired JWT Token");
                 throw new ExpiredJwtException(null,null,"Expired JWT Token");
             }
             catch(MalformedJwtException e) {
-                System.out.println("Malformed JWT Token");
+                logger.error("Malformed JWT Token");
                 throw new MalformedJwtException("Malformed JWT Token");
             }
         }
         if(username!= null && SecurityContextHolder.getContext().getAuthentication()==null) {
             UserDetails user = this.userDetailsService.loadUserByUsername(username);
-            if(this.jwtTokenHelper.validateToken(jwtToken,user)) {
+            if(Boolean.TRUE.equals(this.jwtTokenHelper.validateToken(jwtToken,user))) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities());
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -64,12 +63,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             }
             else {
-                throw new UsernameNotFoundException("Invalid JWT Token");
+                logger.error("Invalid JWT Token ");
             }
 
         }
         else {
-            System.out.println("Username is null or context is not null");
+            logger.error("Username is null or context is not null");
         }
         filterChain.doFilter(request, response);
     }
