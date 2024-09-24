@@ -46,8 +46,6 @@ class JwtAuthenticationFilterTest {
         when(jwtTokenHelper.validateToken("validToken", userDetails)).thenReturn(true);
 
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-
-        ArgumentCaptor<UsernamePasswordAuthenticationToken> authenticationCaptor = ArgumentCaptor.forClass(UsernamePasswordAuthenticationToken.class);
         verify(filterChain).doFilter(request, response);
         verify(jwtTokenHelper).getUsernameFromToken("validToken");
         verify(userDetailsService).loadUserByUsername(username);
