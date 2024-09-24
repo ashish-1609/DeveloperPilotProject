@@ -1,6 +1,7 @@
 package com.pilot.project.services.impl;
 
 import com.pilot.project.entities.Hotel;
+import com.pilot.project.exceptions.ResourceNotFoundException;
 import com.pilot.project.payloads.HotelDTO;
 import com.pilot.project.repositories.HotelRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +87,15 @@ class HotelServiceImplTest {
         assertEquals(hotelDTO.getHotelName(), updatedHotel.getHotelName());
         verify(this.hotelRepository, times(1)).save(hotel);
     }
+    @Test
+    void updateHotel_HotelNotFound() {
+        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::updateHotelById);
+    }
+
+    private void updateHotelById(){
+        this.hotelService.updateHotel(hotelDTO.getHotelId(), hotelDTO);
+    }
 
     @Test
     @Order(3)
@@ -109,6 +119,15 @@ class HotelServiceImplTest {
         assertEquals(hotelDTO.getHotelName(), hotelById.getHotelName());
         verify(this.hotelRepository, times(1)).findById(hotelDTO.getHotelId());
     }
+    @Test
+    void getHotelById_HotelNotFound() {
+        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::getHotelByIdForTest);
+    }
+
+    private void getHotelByIdForTest(){
+        this.hotelService.getHotelById(hotelDTO.getHotelId());
+    }
 
     @Test
     @Order(5)
@@ -119,10 +138,22 @@ class HotelServiceImplTest {
     }
 
     @Test
+    void deleteHotel_HotelNotFound() {
+        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::deleteHotelById);
+    }
+
+    private void deleteHotelById(){
+        this.hotelService.deleteHotel(hotelDTO.getHotelId());
+    }
+
+    @Test
     @Order(6)
     void existByName() {
         when(this.hotelRepository.existsByHotelName(hotelDTO.getHotelName())).thenReturn(Boolean.TRUE);
-        assertTrue(this.hotelRepository.existsByHotelName(hotelDTO.getHotelName()));
+        Boolean existByName= this.hotelService.existByName(hotelDTO.getHotelName());
+        assertNotNull(existByName);
+        assertEquals(Boolean.TRUE, existByName);
         verify(this.hotelRepository, times(1)).existsByHotelName(hotelDTO.getHotelName());
     }
 }

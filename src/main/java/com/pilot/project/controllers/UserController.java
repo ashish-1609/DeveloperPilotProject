@@ -41,7 +41,7 @@ public class UserController {
     @Operation(summary = "Update User By Id", description = "Update the details of a User using it's ID.")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateUser(@PathVariable String id,@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
-        if(bindingResult.hasFieldErrors()){
+        if(bindingResult.hasErrors()){
             return new ResponseEntity<>(
                     new ApiResponse(
                             Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false),

@@ -95,6 +95,14 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }
+    @Test
+    void updateUser_InvalidUser(){
+        when(this.bindingResult.hasErrors()).thenReturn(true);
+        when(this.bindingResult.getFieldError()).thenReturn(new FieldError("user", "name", "User's name cannot be empty."));
+        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getUserId(), userDTO, bindingResult);
+//        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("User's name cannot be empty.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
+    }
 
     @Test
     void getAllUsers() {
@@ -116,12 +124,17 @@ class UserControllerTest {
             assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         }
     }
+    @Test
+    void getUserById_UserNotFound(){
+        lenient().when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
+        ResponseEntity<UserDTO> responseEntity = this.userController.getUserById(userDTO.getUserId());
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+    }
 
     @Test
     void deleteUser() {
         ResponseEntity<?> responseEntity = this.userController.deleteUser(userDTO.getUserId());
         verify(this.userService, times(1)).deleteUser(userDTO.getUserId());
         assertEquals("User deleted Successfully.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
-
     }
 }
