@@ -18,9 +18,9 @@ public class Role {
     @Id
     private int id;
     @Enumerated(EnumType.STRING)
-    private RoleType name;
+    private RoleType role;
 }
-enum RoleType{
+ enum RoleType{
     ROLE_ADMIN,
     ROLE_USER
 }
