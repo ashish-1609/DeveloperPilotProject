@@ -1,6 +1,7 @@
 package com.pilot.project.services.impl;
 
 import com.pilot.project.entities.User;
+import com.pilot.project.exceptions.ResourceNotFoundException;
 import com.pilot.project.payloads.UserDTO;
 import com.pilot.project.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,6 +84,16 @@ class UserServiceImplTest {
         assertEquals(userDTO.getUserId(), updatedUser.getUserId());
         verify(this.userRepository).save(any(User.class));
 
+    }
+
+    @Test
+    void updateUser_UserNotFound(){
+        when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, this::updateUserForTest);
+    }
+
+    private void updateUserForTest() {
+        this.userService.updateUser(userDTO.getUserId(), userDTO);
     }
 
     @Test
