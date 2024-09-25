@@ -13,9 +13,6 @@ public class CustomJobExecutionException extends RuntimeException {
     public CustomJobExecutionException(String msg) {
         super(msg);
     }
-    public CustomJobExecutionException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
     public CustomJobExecutionException(JobExecutionAlreadyRunningException ex){
         super(ex.getMessage());
     }
