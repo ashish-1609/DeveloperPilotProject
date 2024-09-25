@@ -80,6 +80,4 @@ public class BatchConfig {
                 .skip(Exception.class)
                 .build();
     }
-
-
 }

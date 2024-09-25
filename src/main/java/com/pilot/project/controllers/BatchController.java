@@ -1,5 +1,6 @@
 package com.pilot.project.controllers;
 
+import com.pilot.project.exceptions.CustomJobExecutionException;
 import com.pilot.project.payloads.ApiResponse;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -30,17 +31,6 @@ public class BatchController {
         this.jobLauncher = jobLauncher;
         this.hotelJob = hotelJob;
     }
-    @PostMapping("/run")
-    public ResponseEntity<?> runJob(){
-        JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis()).toJobParameters();
-        try {
-            jobLauncher.run(hotelJob, jobParameters);
-            return ResponseEntity.ok().build();
-        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
-                 JobParametersInvalidException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     @PostMapping("/hotels-upload/")
     public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file) throws IOException {
@@ -48,7 +38,7 @@ public class BatchController {
 
         String fileName = file.getOriginalFilename();
         assert fileName != null;
-        String path = "C:\\Users\\Ashish Mishra\\Projects\\DeveloperPilotProject\\src\\main\\resources\\";
+        String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
         File fileToSave = new File(path +fileName);
         file.transferTo(fileToSave);
 
@@ -60,7 +50,7 @@ public class BatchController {
             return new ResponseEntity<>(new ApiResponse("Hotels Added Successfully", true), HttpStatus.OK);
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
                  JobParametersInvalidException e) {
-            throw new RuntimeException(e);
+            throw new CustomJobExecutionException(e.getMessage());
         }
     }
 

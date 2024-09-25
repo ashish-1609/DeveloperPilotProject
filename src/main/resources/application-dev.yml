@@ -30,3 +30,7 @@ logging:
     org:
       springframework:
         security: DEBUG
+springdoc:
+  swagger-ui:
+    csrf:
+      enabled: true

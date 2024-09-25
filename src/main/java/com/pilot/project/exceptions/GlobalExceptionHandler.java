@@ -16,4 +16,9 @@ public class GlobalExceptionHandler {
                         ex.getMessage().toUpperCase(),false)
                 , HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(CustomJobExecutionException.class)
+    public ResponseEntity<ApiResponse> customJobExecutionExceptionHandler(CustomJobExecutionException ex){
+        return new ResponseEntity<>(new ApiResponse(ex.getMessage().toUpperCase(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
