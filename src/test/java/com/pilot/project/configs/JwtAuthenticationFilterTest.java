@@ -61,9 +61,7 @@ class JwtAuthenticationFilterTest {
         UserDetails userDetails = mock(UserDetails.class);
 
         when(request.getHeader("Authorization")).thenReturn(token);
-        when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenReturn(username);
-        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
-        when(jwtTokenHelper.validateToken("invalidToken", userDetails)).thenThrow(new IllegalArgumentException("Unable to get JWT Token"));
+        when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenThrow(new IllegalArgumentException("Unable to get JWT Token"));
         assertThrows(IllegalArgumentException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
     }
     @Test
@@ -72,9 +70,7 @@ class JwtAuthenticationFilterTest {
         String username = "invalidUser";
         UserDetails userDetails = mock(UserDetails.class);
         when(request.getHeader("Authorization")).thenReturn(token);
-        when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenReturn(username);
-        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
-        when(jwtTokenHelper.validateToken("invalidToken", userDetails)).thenThrow(new ExpiredJwtException(null, null, "Expired JWT Token"));
+        when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenThrow(new ExpiredJwtException(null, null, "Expired JWT Token"));
         assertThrows(ExpiredJwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
     }
     @Test
