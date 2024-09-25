@@ -25,15 +25,9 @@ public class BatchControllerTest {
     @InjectMocks
     private BatchController batchController;
 
-    @Mock
-    private MockMvc mockMvc;
 
     @Mock
     private JobLauncher jobLauncher;
-
-    @Mock
-    private Job hotelJob;
-
     @Test
     void testHotelBatchController_Success() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "hotels.csv", "text/csv", "some data".getBytes());
