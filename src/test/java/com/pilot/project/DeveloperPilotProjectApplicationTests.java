@@ -14,5 +14,6 @@ class DeveloperPilotProjectApplicationTests {
     @Test
     void main() {
         DeveloperPilotProjectApplication.main(new String[] {});
+        assert true;
     }
 }

@@ -60,7 +60,7 @@ class JwtAuthenticationFilterTest {
         verify(jwtTokenHelper).validateToken("validToken", userDetails);
     }
     @Test
-    void doFilterInternal_WithIllegalArgumentException() throws ServletException, IOException {
+    void doFilterInternal_WithIllegalArgumentException()  {
         String token = "Bearer invalidToken";
         String username = "invalidUser";
         UserDetails userDetails = mock(UserDetails.class);
@@ -72,7 +72,7 @@ class JwtAuthenticationFilterTest {
         assertThrows(IllegalArgumentException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
     }
     @Test
-    void doFilterInternal_WithExpiredJwtException() throws ServletException, IOException {
+    void doFilterInternal_WithExpiredJwtException() {
         String token = "Bearer invalidToken";
         String username = "invalidUser";
         UserDetails userDetails = mock(UserDetails.class);
@@ -83,7 +83,7 @@ class JwtAuthenticationFilterTest {
         assertThrows(ExpiredJwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
     }
     @Test
-    void doFilterInternal_WithMalformedJwtException() throws ServletException, IOException {
+    void doFilterInternal_WithMalformedJwtException() {
         String token = "Bearer invalidToken";
         String username = "invalidUser";
         UserDetails userDetails = mock(UserDetails.class);
@@ -98,8 +98,6 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_NullUserDetails() throws ServletException, IOException {
         String token = "Bearer invalidToken";
-        String username;
-        UserDetails userDetails = null;
         when(request.getHeader("Authorization")).thenReturn(token);
         when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenReturn(null);
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
