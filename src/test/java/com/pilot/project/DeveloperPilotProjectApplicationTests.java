@@ -18,7 +18,7 @@ class DeveloperPilotProjectApplicationTests {
     }
 
     @Test
-    void main() {;
+    void main() {
         assertThat(SpringApplication.run(DeveloperPilotProjectApplication.class)).isNotNull();
     }
 

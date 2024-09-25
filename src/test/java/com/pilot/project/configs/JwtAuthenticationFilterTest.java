@@ -39,7 +39,6 @@ class JwtAuthenticationFilterTest {
     @Mock
     private FilterChain filterChain;
 
-    Logger logger = LogManager.getLogger(JwtAuthenticationFilterTest.class);
 
     @Test
     void doFilterInternal() throws ServletException, IOException {
