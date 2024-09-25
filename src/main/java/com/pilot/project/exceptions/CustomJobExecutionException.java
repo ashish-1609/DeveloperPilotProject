@@ -13,17 +13,4 @@ public class CustomJobExecutionException extends RuntimeException {
     public CustomJobExecutionException(String msg) {
         super(msg);
     }
-    public CustomJobExecutionException(JobExecutionAlreadyRunningException ex){
-        super(ex.getMessage());
-    }
-    public CustomJobExecutionException(JobRestartException ex){
-        super(ex.getMessage());
-    }
-    public CustomJobExecutionException(JobInstanceAlreadyCompleteException ex){
-        super(ex.getMessage());
-    }
-    public CustomJobExecutionException(JobParametersInvalidException ex){
-        super(ex.getMessage());
-    }
-
 }

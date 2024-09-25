@@ -48,15 +48,8 @@ public class BatchController {
         try {
             jobLauncher.run(hotelJob, jobParameters);
             return new ResponseEntity<>(new ApiResponse("Hotels Added Successfully", true), HttpStatus.OK);
-        } catch (JobExecutionAlreadyRunningException e) {
-            throw new CustomJobExecutionException(e);
-        } catch (JobRestartException e) {
-            throw new CustomJobExecutionException(e);
-        } catch (JobInstanceAlreadyCompleteException e) {
-            throw new CustomJobExecutionException(e);
-        } catch (JobParametersInvalidException e) {
-            throw new CustomJobExecutionException(e);
-        }catch (RuntimeException e) {
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
+                 JobParametersInvalidException e) {
             throw new CustomJobExecutionException(e.getMessage());
         }
     }
