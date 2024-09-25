@@ -25,8 +25,6 @@ public class BatchController {
     private final JobLauncher jobLauncher;
     private final Job hotelJob;
 
-    private final String path="C:\\Users\\Ashish Mishra\\Projects\\DeveloperPilotProject\\src\\main\\resources\\";
-
     @Autowired
     public BatchController(JobLauncher jobLauncher, Job hotelJob) {
         this.jobLauncher = jobLauncher;
@@ -50,11 +48,12 @@ public class BatchController {
 
         String fileName = file.getOriginalFilename();
         assert fileName != null;
-        File fileToSave = new File(path+fileName);
+        String path = "C:\\Users\\Ashish Mishra\\Projects\\DeveloperPilotProject\\src\\main\\resources\\";
+        File fileToSave = new File(path +fileName);
         file.transferTo(fileToSave);
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("fullPathFileName", path+fileName)
+                .addString("fullPathFileName", path +fileName)
         .addLong("startAt", System.currentTimeMillis()).toJobParameters();
         try {
             jobLauncher.run(hotelJob, jobParameters);
