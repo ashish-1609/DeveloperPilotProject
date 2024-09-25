@@ -14,6 +14,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MockMvc;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,9 +25,15 @@ public class BatchControllerTest {
     @InjectMocks
     private BatchController batchController;
 
+    @Mock
+    private MockMvc mockMvc;
 
     @Mock
     private JobLauncher jobLauncher;
+
+    @Mock
+    private Job hotelJob;
+
     @Test
     void testHotelBatchController_Success() throws Exception {
         MockMultipartFile file = new MockMultipartFile("file", "hotels.csv", "text/csv", "some data".getBytes());
