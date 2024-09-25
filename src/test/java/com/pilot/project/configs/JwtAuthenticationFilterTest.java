@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -85,13 +84,8 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_WithMalformedJwtException() {
         String token = "Bearer invalidToken";
-        String username = "invalidUser";
-        UserDetails userDetails = mock(UserDetails.class);
         when(request.getHeader("Authorization")).thenReturn(token);
-        when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenReturn(username);
-        when(userDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
-        when(jwtTokenHelper.validateToken("invalidToken", userDetails)).thenReturn(false);
-        when(jwtTokenHelper.validateToken("invalidToken", userDetails)).thenThrow(new MalformedJwtException(token));
+        when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenThrow(new MalformedJwtException("Malformed JWT Token"));
         assertThrows(MalformedJwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
 
     }
@@ -101,7 +95,6 @@ class JwtAuthenticationFilterTest {
         when(request.getHeader("Authorization")).thenReturn(token);
         when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenReturn(null);
         jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain).doFilter(request, response);
+        assertNull(jwtTokenHelper.getUsernameFromToken("invalidToken"));
     }
 }

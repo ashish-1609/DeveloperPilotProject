@@ -1,9 +1,15 @@
 package com.pilot.project;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@ExtendWith({SpringExtension.class})
 class DeveloperPilotProjectApplicationTests {
 
 
@@ -12,8 +18,8 @@ class DeveloperPilotProjectApplicationTests {
     }
 
     @Test
-    void main() {
-        DeveloperPilotProjectApplication.main(new String[] {});
-        assert true;
+    void main() {;
+        assertThat(SpringApplication.run(DeveloperPilotProjectApplication.class)).isNotNull();
     }
+
 }
