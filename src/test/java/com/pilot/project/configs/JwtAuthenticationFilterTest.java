@@ -57,9 +57,6 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_WithIllegalArgumentException()  {
         String token = "Bearer invalidToken";
-        String username = "invalidUser";
-        UserDetails userDetails = mock(UserDetails.class);
-
         when(request.getHeader("Authorization")).thenReturn(token);
         when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenThrow(new IllegalArgumentException("Unable to get JWT Token"));
         assertThrows(IllegalArgumentException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
@@ -67,8 +64,6 @@ class JwtAuthenticationFilterTest {
     @Test
     void doFilterInternal_WithExpiredJwtException() {
         String token = "Bearer invalidToken";
-        String username = "invalidUser";
-        UserDetails userDetails = mock(UserDetails.class);
         when(request.getHeader("Authorization")).thenReturn(token);
         when(jwtTokenHelper.getUsernameFromToken("invalidToken")).thenThrow(new ExpiredJwtException(null, null, "Expired JWT Token"));
         assertThrows(ExpiredJwtException.class, () -> jwtAuthenticationFilter.doFilterInternal(request, response, filterChain));
