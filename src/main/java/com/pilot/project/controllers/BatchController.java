@@ -9,6 +9,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,28 +25,42 @@ public class BatchController {
     private final JobLauncher jobLauncher;
     private final Job hotelJob;
 
+    private final String path="C:\\Users\\Ashish Mishra\\Projects\\DeveloperPilotProject\\src\\main\\resources\\";
+
+    @Autowired
     public BatchController(JobLauncher jobLauncher, Job hotelJob) {
         this.jobLauncher = jobLauncher;
         this.hotelJob = hotelJob;
     }
-
-    @PostMapping("/hotels-upload/")
-    public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/run")
+    public ResponseEntity<?> runJob(){
         JobParameters jobParameters = new JobParametersBuilder().addLong("startAt", System.currentTimeMillis()).toJobParameters();
         try {
-            File covFile = new File(System.getProperty("java.io.tmpdir")+"/"+file.getOriginalFilename());
-            file.transferTo(covFile);
+            jobLauncher.run(hotelJob, jobParameters);
+            return ResponseEntity.ok().build();
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
+                 JobParametersInvalidException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @PostMapping("/hotels-upload/")
+    public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file) throws IOException {
+
+
+        String fileName = file.getOriginalFilename();
+        assert fileName != null;
+        File fileToSave = new File(path+fileName);
+        file.transferTo(fileToSave);
+
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString("fullPathFileName", path+fileName)
+        .addLong("startAt", System.currentTimeMillis()).toJobParameters();
+        try {
             jobLauncher.run(hotelJob, jobParameters);
             return new ResponseEntity<>(new ApiResponse("Hotels Added Successfully", true), HttpStatus.OK);
-        } catch (JobExecutionAlreadyRunningException e) {
-            throw new RuntimeException(e);
-        } catch (JobRestartException e) {
-            throw new RuntimeException(e);
-        } catch (JobInstanceAlreadyCompleteException e) {
-            throw new RuntimeException(e);
-        } catch (JobParametersInvalidException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
+                 JobParametersInvalidException e) {
             throw new RuntimeException(e);
         }
     }

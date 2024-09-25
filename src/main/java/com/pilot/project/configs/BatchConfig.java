@@ -6,22 +6,25 @@ import com.pilot.project.utils.JobCompletionNotificationListener;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.io.File;
+
 @Configuration
-@EnableBatchProcessing
 public class BatchConfig {
 
     private final EntityManagerFactory entityManagerFactory;
@@ -32,18 +35,14 @@ public class BatchConfig {
     }
 
     @Bean
-    public FlatFileItemReader<Hotel> reader(){
+    @StepScope
+    public FlatFileItemReader<Hotel> reader(@Value("#{jobParameters[fullPathFileName]}") String pathFile ){
         return new FlatFileItemReaderBuilder<Hotel>()
                 .name("hotelItemReader")
-                .resource(new FileSystemResource("input/hotel.csv"))
+                .resource(new FileSystemResource(new File(pathFile)))
                 .delimited()
-                .names("hotelName", "hotelAddress", "hotelCity")
-                .fieldSetMapper(new BeanWrapperFieldSetMapper<Hotel>() {
-                    @Override
-                    public void setTargetType(Class<? extends Hotel> type) {
-                        super.setTargetType(Hotel.class);
-                    }
-                })
+                .names("hotelId","hotelName", "hotelAddress", "hotelCity")
+                .targetType(Hotel.class)
                 .linesToSkip(1)
                 .build();
     }
@@ -78,6 +77,9 @@ public class BatchConfig {
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .faultTolerant()
+                .skipLimit(5)
+                .skip(Exception.class)
                 .build();
     }
 

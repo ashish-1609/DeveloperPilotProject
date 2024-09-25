@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
-    private final transient User user;
+    private final User user;
     public CustomUserDetails(User user) {
         super();
         this.user = user;

@@ -13,7 +13,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-
+  sql:
+    init:
+      mode: always
+  batch:
+    jdbc:
+      initialize-schema: always
 management:
   endpoints:
     web:

@@ -61,10 +61,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf-> csrf.disable());
         http.authorizeHttpRequests(request->{
                     request.requestMatchers("/api/hotels/**").authenticated();
                     request.requestMatchers("/api/ratings/**").authenticated();
                     request.requestMatchers(HttpMethod.POST, "/api/users/").permitAll();
+                    request.requestMatchers("/hotels-upload/").permitAll();
                     request.anyRequest().permitAll();
                 }).formLogin(form->form.loginPage("/login")
                         .loginProcessingUrl("/login").permitAll()
