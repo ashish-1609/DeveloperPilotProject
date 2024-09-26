@@ -20,6 +20,7 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
 
+    @Autowired
     public AuthController(JwtTokenHelper jwtTokenHelper, UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
         this.jwtTokenHelper = jwtTokenHelper;
         this.userDetailsService = userDetailsService;
