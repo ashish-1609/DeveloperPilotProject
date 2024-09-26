@@ -57,9 +57,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(request->{
-                    request.requestMatchers("/api/hotels/**").authenticated();
-                    request.requestMatchers("/api/ratings/**").authenticated();
-                    request.requestMatchers(HttpMethod.POST, "/api/users/").permitAll();
+                    request.requestMatchers("/hotels/**").authenticated();
+                    request.requestMatchers("/ratings/**").authenticated();
+                    request.requestMatchers(HttpMethod.POST, "/users/").permitAll();
                     request.requestMatchers("/hotels-upload/").permitAll();
                     request.anyRequest().permitAll();
                 }).formLogin(form->form.loginPage("/login")

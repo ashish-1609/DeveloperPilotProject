@@ -43,20 +43,20 @@ class RatingControllerTest {
     @BeforeEach
     void setUp() {
         userDTO = UserDTO.builder()
-                .userId(UUID.randomUUID().toString())
+                .id(UUID.randomUUID().toString())
                 .name("test")
                 .email("test@email.com")
                 .password("password")
                 .about("Test About")
                 .build();
         hotelDTO =HotelDTO.builder()
-                .hotelId(UUID.randomUUID().toString())
-                .hotelName("Test Hotel")
-                .hotelCity("Test City")
-                .hotelAddress("Test Address")
+                .id(UUID.randomUUID().toString())
+                .name("Test Hotel")
+                .city("Test City")
+                .address("Test Address")
                 .build();
         ratingDTO=RatingDTO.builder()
-                .ratingId(UUID.randomUUID().toString())
+                .id(UUID.randomUUID().toString())
                 .points(10)
                 .user(userDTO)
                 .hotel(hotelDTO)
@@ -65,10 +65,10 @@ class RatingControllerTest {
 
     @Test
     void saveRating() {
-        ApiResponse apiResponse = new ApiResponse("Rating Added Successfully", true, ratingDTO);
+        ApiResponse apiResponse = new ApiResponse("Rating Added Successfully");
         when(this.bindingResult.hasErrors()).thenReturn(false);
-        when(this.ratingService.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO)).thenReturn(ratingDTO);
-        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
+        when(this.ratingService.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO)).thenReturn(ratingDTO);
+        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
 
@@ -78,27 +78,27 @@ class RatingControllerTest {
     void saveRating_InvalidRating(){
         when(this.bindingResult.hasErrors()).thenReturn(true);
         when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "points", "Hotel can be rated only in range of 0-10.")));
-        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(List.of("Hotel can be rated only in range of 0-10.").toString(), ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
     @Test
     void saveRating_InternalServerError(){
-        ApiResponse apiResponse = new ApiResponse("Internal Server Error", false);
+        ApiResponse apiResponse = new ApiResponse("Internal Server Error");
         when(this.bindingResult.hasErrors()).thenReturn(false);
-        when(this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult)).thenThrow(HttpServerErrorException.InternalServerError.class);
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.saveRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO, bindingResult);
+        when(this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult)).thenThrow(HttpServerErrorException.InternalServerError.class);
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, apiResponseResponseEntity.getStatusCode());
         assertEquals(apiResponse, apiResponseResponseEntity.getBody());
     }
 
     @Test
     void updateRating() {
-        ApiResponse apiResponse = new ApiResponse("Rating Updated Successfully", true, ratingDTO);
+        ApiResponse apiResponse = new ApiResponse("Rating Updated Successfully");
         when(this.bindingResult.hasErrors()).thenReturn(false);
-        when(this.ratingService.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO)).thenReturn(ratingDTO);
+        when(this.ratingService.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO)).thenReturn(ratingDTO);
 
-        ResponseEntity<?> responseEntity = this.ratingController.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.ratingController.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO, bindingResult);
         if(bindingResult.hasErrors()){
             assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         }else{
@@ -111,14 +111,14 @@ class RatingControllerTest {
     void updateRating_InvalidRating(){
         when(this.bindingResult.hasErrors()).thenReturn(true);
         when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "points", "Hotel can be rated in range of 0-10.")));
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.updateRating(userDTO.getUserId(), hotelDTO.getHotelId(), ratingDTO.getRatingId(), ratingDTO, bindingResult);
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO, bindingResult);
         assertEquals(HttpStatus.BAD_REQUEST, apiResponseResponseEntity.getStatusCode());
         assertEquals(List.of("Hotel can be rated in range of 0-10.").toString(),((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }
 
     @Test
     void deleteRating() {
-        ResponseEntity<?> responseEntity = this.ratingController.deleteRating(ratingDTO.getRatingId());
+        ResponseEntity<?> responseEntity = this.ratingController.deleteRating(ratingDTO.getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals("Rating Deleted Successfully", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
@@ -134,31 +134,31 @@ class RatingControllerTest {
 
     @Test
     void getRatingsByUser() {
-        when(this.ratingService.findAllRatingsByUser(userDTO.getUserId())).thenReturn(List.of(ratingDTO));
-        ResponseEntity<?> responseEntity = this.ratingController.getRatingsByUser(userDTO.getUserId());
+        when(this.ratingService.findAllRatingsByUser(userDTO.getId())).thenReturn(List.of(ratingDTO));
+        ResponseEntity<?> responseEntity = this.ratingController.getRatingsByUser(userDTO.getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(this.ratingService.findAllRatingsByUser(userDTO.getUserId()), responseEntity.getBody());
+        assertEquals(this.ratingService.findAllRatingsByUser(userDTO.getId()), responseEntity.getBody());
     }
 
     @Test
     void getRatingsByHotel() {
-        when(this.ratingService.findAllRatingsByHotel(hotelDTO.getHotelId())).thenReturn(List.of(ratingDTO));
-        ResponseEntity<?> responseEntity = this.ratingController.getRatingsByHotel(hotelDTO.getHotelId());
+        when(this.ratingService.findAllRatingsByHotel(hotelDTO.getId())).thenReturn(List.of(ratingDTO));
+        ResponseEntity<?> responseEntity = this.ratingController.getRatingsByHotel(hotelDTO.getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(this.ratingService.findAllRatingsByHotel(hotelDTO.getHotelId()), responseEntity.getBody());
+        assertEquals(this.ratingService.findAllRatingsByHotel(hotelDTO.getId()), responseEntity.getBody());
     }
 
     @Test
     void getRatingById() {
-        when(this.ratingService.getRatingById(ratingDTO.getRatingId())).thenReturn(ratingDTO);
-        ResponseEntity<?> responseEntity = this.ratingController.getRatingById(ratingDTO.getRatingId());
+        when(this.ratingService.getRatingById(ratingDTO.getId())).thenReturn(ratingDTO);
+        ResponseEntity<?> responseEntity = this.ratingController.getRatingById(ratingDTO.getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(ratingDTO, responseEntity.getBody());
     }
 
     @Test
     void deleteRatingByUserId() {
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.deleteRatingByUserId(userDTO.getUserId());
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.deleteRatingByUser(userDTO.getId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
         assertEquals("Ratings Deleted Successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }
@@ -166,7 +166,7 @@ class RatingControllerTest {
     @Test
     void deleteRatingByHotelId() {
 
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.deleteRatingByHotelId(hotelDTO.getHotelId());
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.deleteRatingByHotelId(hotelDTO.getId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
         assertEquals("Ratings Deleted Successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }

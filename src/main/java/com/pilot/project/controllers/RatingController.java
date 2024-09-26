@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/ratings")
+@RequestMapping("/ratings")
 @Tag(name = "Rating Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of Ratings.")
 public class RatingController {
     private final RatingService ratingService;
@@ -32,39 +32,41 @@ public class RatingController {
     }
 
     @Operation(summary = "Add Rating", description = "Add Rating in the system, and provide the user id and hotel id.")
-    @PostMapping("/user/{userId}/hotel/{hotelId}")
-    public ResponseEntity<ApiResponse> saveRating(@PathVariable String userId, @PathVariable String hotelId, @RequestBody @Valid RatingDTO ratingDTO, BindingResult bindingResult) {
+    @PostMapping("/user/{email}/hotel/{hotelId}")
+    public ResponseEntity<ApiResponse> saveRating(@PathVariable String email, @PathVariable String hotelId, @RequestBody @Valid RatingDTO ratingDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(
                     DefaultMessageSourceResolvable::getDefaultMessage
-            ).toList().toString(),false), HttpStatus.BAD_REQUEST);
+            ).toList().toString()), HttpStatus.BAD_REQUEST);
         }
         try{
-            return new ResponseEntity<>(new ApiResponse("Rating Added Successfully", true,ratingService.saveRating(userId, hotelId, ratingDTO)), HttpStatus.OK);
+            ratingService.saveRating(email, hotelId, ratingDTO);
+            return new ResponseEntity<>(new ApiResponse("Rating Added Successfully"), HttpStatus.OK);
         }catch(Exception e){
-            return new ResponseEntity<>(new ApiResponse("Internal Server Error", false), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse("Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Operation(summary = "Update Rating By Id", description = "Update the details of a Rating using it's ID, and also provide User Id, Hotel Id.")
-    @PutMapping("/user/{userId}/hotel/{hotelId}/{ratingId}")
+    @PutMapping("/user/{email}/hotel/{hotelId}/{ratingId}")
     public ResponseEntity<ApiResponse> updateRating(
-            @PathVariable String userId,
+            @PathVariable String email,
             @PathVariable String hotelId,
             @PathVariable String ratingId,
             @RequestBody @Valid RatingDTO ratingDTO,
             BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString()), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("Rating Updated Successfully",true,ratingService.updateRating(userId, hotelId,ratingId, ratingDTO)), HttpStatus.OK);
+        ratingService.updateRating(email, hotelId,ratingId, ratingDTO);
+        return new ResponseEntity<>(new ApiResponse("Rating Updated Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete Rating By Id", description = "Delete the details of a Rating using it's ID.")
-    @DeleteMapping("/{ratingId}")
+    @DeleteMapping("/delete/{ratingId}")
     public ResponseEntity<ApiResponse> deleteRating(@PathVariable String ratingId) {
         ratingService.deleteRating(ratingId);
-        return new ResponseEntity<>(new ApiResponse("Rating Deleted Successfully", true), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Rating Deleted Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Get All Ratings", description = "Fetch details of All Ratings.")
@@ -75,9 +77,9 @@ public class RatingController {
     }
 
     @Operation(summary = "Get All Ratings by User Id", description = "Fetch details of the Ratings by user ID.")
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<RatingDTO>> getRatingsByUser(@PathVariable String userId){
-        return new ResponseEntity<>(ratingService.findAllRatingsByUser(userId), HttpStatus.OK);
+    @GetMapping("/user/{email}")
+    public ResponseEntity<List<RatingDTO>> getRatingsByUser(@PathVariable String email){
+        return new ResponseEntity<>(ratingService.findAllRatingsByUser(email), HttpStatus.OK);
     }
 
     @Operation(summary = "Get All Ratings by Hotel Id", description = "Fetch details of All Ratings by Hotel ID.")
@@ -93,24 +95,24 @@ public class RatingController {
     }
 
     @Operation(summary = "Delete All Ratings By User Id", description = "Delete the details of all Ratings using User ID.")
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<ApiResponse> deleteRatingByUserId(@PathVariable String userId){
-        ratingService.deleteAllRatingsByUser(userId);
-        return new ResponseEntity<>(new ApiResponse("Ratings Deleted Successfully", true), HttpStatus.OK);
+    @DeleteMapping("/user/{email}")
+    public ResponseEntity<ApiResponse> deleteRatingByUser(@PathVariable String email){
+        ratingService.deleteAllRatingsByUser(email);
+        return new ResponseEntity<>(new ApiResponse("Ratings Deleted Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete All Ratings By Hotel Id", description = "Delete the details of all Ratings using Hotel ID.")
     @DeleteMapping("/{hotelId}")
     public ResponseEntity<ApiResponse> deleteRatingByHotelId(@PathVariable String hotelId){
         ratingService.deleteAllRatingsByHotel(hotelId);
-        return new ResponseEntity<>(new ApiResponse("Ratings Deleted Successfully", true), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Ratings Deleted Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete All Ratings", description = "Delete the details of all ratings present in the system.")
     @DeleteMapping("/")
     public ResponseEntity<ApiResponse> deleteAllRatings(){
         ratingService.deleteAllRatings();
-        return new ResponseEntity<>(new ApiResponse("All Ratings Deleted Successfully", true), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("All Ratings Deleted Successfully"), HttpStatus.OK);
     }
 
 }

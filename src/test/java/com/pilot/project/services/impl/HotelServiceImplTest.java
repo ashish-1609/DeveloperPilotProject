@@ -42,17 +42,17 @@ class HotelServiceImplTest {
     @BeforeEach
     void setUp() {
         hotelDTO= HotelDTO.builder()
-                .hotelId(UUID.randomUUID().toString())
-                .hotelName("Test Hotel")
-                .hotelAddress("Test Address")
-                .hotelCity("Test City")
+                .id(UUID.randomUUID().toString())
+                .name("Test Hotel")
+                .address("Test Address")
+                .city("Test City")
                 .build();
 
         hotel=new Hotel();
-        hotel.setHotelId(hotelDTO.getHotelId());
-        hotel.setHotelName(hotelDTO.getHotelName());
-        hotel.setHotelAddress(hotelDTO.getHotelAddress());
-        hotel.setHotelCity(hotelDTO.getHotelCity());
+        hotel.setId(hotelDTO.getId());
+        hotel.setName(hotelDTO.getName());
+        hotel.setAddress(hotelDTO.getAddress());
+        hotel.setCity(hotelDTO.getCity());
 
         hotelList=new ArrayList<>();
 
@@ -67,9 +67,9 @@ class HotelServiceImplTest {
 
         HotelDTO savedHotel = this.hotelService.saveHotel(hotelDTO);
 
-        assertNotNull(savedHotel.getHotelId());
-        assertEquals(hotelDTO.getHotelId(), savedHotel.getHotelId());
-        assertEquals(hotelDTO.getHotelName(), savedHotel.getHotelName());
+        assertNotNull(savedHotel.getId());
+        assertEquals(hotelDTO.getId(), savedHotel.getId());
+        assertEquals(hotelDTO.getName(), savedHotel.getName());
 
         verify(this.hotelRepository, times(1)).save(hotel);
     }
@@ -77,24 +77,24 @@ class HotelServiceImplTest {
     @Test
     @Order(2)
     void updateHotel() {
-        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
+        when(this.hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.of(hotel));
         when(this.hotelRepository.save(any(Hotel.class))).thenReturn(hotel);
         when(this.modelMapper.map(hotel, HotelDTO.class)).thenReturn(hotelDTO);
 
-        HotelDTO updatedHotel = this.hotelService.updateHotel(hotelDTO.getHotelId(), hotelDTO);
+        HotelDTO updatedHotel = this.hotelService.updateHotel(hotelDTO.getId(), hotelDTO);
         assertNotNull(updatedHotel);
-        assertEquals(hotelDTO.getHotelId(), updatedHotel.getHotelId());
-        assertEquals(hotelDTO.getHotelName(), updatedHotel.getHotelName());
+        assertEquals(hotelDTO.getId(), updatedHotel.getId());
+        assertEquals(hotelDTO.getName(), updatedHotel.getName());
         verify(this.hotelRepository, times(1)).save(hotel);
     }
     @Test
     void updateHotel_HotelNotFound() {
-        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.empty());
+        when(this.hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::updateHotelById);
     }
 
     private void updateHotelById(){
-        this.hotelService.updateHotel(hotelDTO.getHotelId(), hotelDTO);
+        this.hotelService.updateHotel(hotelDTO.getId(), hotelDTO);
     }
 
     @Test
@@ -111,49 +111,49 @@ class HotelServiceImplTest {
     @Test
     @Order(4)
     void getHotelById() {
-        when(hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
+        when(hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.of(hotel));
         when(modelMapper.map(hotel, HotelDTO.class)).thenReturn(hotelDTO);
-        HotelDTO hotelById = hotelService.getHotelById(hotelDTO.getHotelId());
+        HotelDTO hotelById = hotelService.getHotelById(hotelDTO.getId());
         assertNotNull(hotelById);
-        assertEquals(hotelDTO.getHotelId(), hotelById.getHotelId());
-        assertEquals(hotelDTO.getHotelName(), hotelById.getHotelName());
-        verify(this.hotelRepository, times(1)).findById(hotelDTO.getHotelId());
+        assertEquals(hotelDTO.getId(), hotelById.getId());
+        assertEquals(hotelDTO.getName(), hotelById.getName());
+        verify(this.hotelRepository, times(1)).findById(hotelDTO.getId());
     }
     @Test
     void getHotelById_HotelNotFound() {
-        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.empty());
+        when(this.hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::getHotelByIdForTest);
     }
 
     private void getHotelByIdForTest(){
-        this.hotelService.getHotelById(hotelDTO.getHotelId());
+        this.hotelService.getHotelById(hotelDTO.getId());
     }
 
     @Test
     @Order(5)
     void deleteHotel() {
-        when(hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.of(hotel));
-        assertDoesNotThrow(() -> hotelService.deleteHotel(hotelDTO.getHotelId()));
+        when(hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.of(hotel));
+        assertDoesNotThrow(() -> hotelService.deleteHotel(hotelDTO.getId()));
         verify(hotelRepository, times(1)).delete(hotel);
     }
 
     @Test
     void deleteHotel_HotelNotFound() {
-        when(this.hotelRepository.findById(hotelDTO.getHotelId())).thenReturn(Optional.empty());
+        when(this.hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::deleteHotelById);
     }
 
     private void deleteHotelById(){
-        this.hotelService.deleteHotel(hotelDTO.getHotelId());
+        this.hotelService.deleteHotel(hotelDTO.getId());
     }
 
     @Test
     @Order(6)
     void existByName() {
-        when(this.hotelRepository.existsByHotelName(hotelDTO.getHotelName())).thenReturn(Boolean.TRUE);
-        Boolean existByName= this.hotelService.existByName(hotelDTO.getHotelName());
+        when(this.hotelRepository.existsByName(hotelDTO.getName())).thenReturn(Boolean.TRUE);
+        Boolean existByName= this.hotelService.existByName(hotelDTO.getName());
         assertNotNull(existByName);
         assertEquals(Boolean.TRUE, existByName);
-        verify(this.hotelRepository, times(1)).existsByHotelName(hotelDTO.getHotelName());
+        verify(this.hotelRepository, times(1)).existsByName(hotelDTO.getName());
     }
 }

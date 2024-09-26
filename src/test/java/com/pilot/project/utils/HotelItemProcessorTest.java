@@ -19,18 +19,18 @@ class HotelItemProcessorTest {
     @BeforeEach
     void setUp() {
         hotel = new Hotel();
-        hotel.setHotelName("Hotel Name");
-        hotel.setHotelAddress("Hotel Address");
-        hotel.setHotelCity("Hotel City");
+        hotel.setName("Hotel Name");
+        hotel.setAddress("Hotel Address");
+        hotel.setCity("Hotel City");
     }
 
     @Test
     void process() throws Exception {
         Hotel result = this.hotelItemProcessor.process(hotel);
         assert result != null;
-        assertEquals(hotel.getHotelName(), result.getHotelName());
-        assertEquals(hotel.getHotelAddress(), result.getHotelAddress());
-        assertEquals(hotel.getHotelCity(), result.getHotelCity());
+        assertEquals(hotel.getName(), result.getName());
+        assertEquals(hotel.getAddress(), result.getAddress());
+        assertEquals(hotel.getCity(), result.getCity());
         assertNotNull(result);
 
     }

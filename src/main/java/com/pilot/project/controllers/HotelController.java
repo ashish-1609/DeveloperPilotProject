@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/hotels")
+@RequestMapping("/hotels")
 @RequiredArgsConstructor
 @Tag(name = "Hotel Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of hotels.")
 public class HotelController {
@@ -35,28 +35,33 @@ public class HotelController {
     public ResponseEntity<ApiResponse> saveHotel(@RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
 
-            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString(), false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString()), HttpStatus.BAD_REQUEST);
         }
-        if (Boolean.TRUE.equals(hotelService.existByName(hotelDTO.getHotelName()))) {
-            return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getHotelName(), false), HttpStatus.BAD_REQUEST);
+        if (Boolean.TRUE.equals(hotelService.existByName(hotelDTO.getName()))) {
+            return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getName()), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("Hotel Added Successfully",true, hotelService.saveHotel(hotelDTO)), HttpStatus.OK);
+        hotelService.saveHotel(hotelDTO);
+        return new ResponseEntity<>(new ApiResponse("Hotel Added Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete Hotel By Id", description = "Delete the details of a hotel using it's ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteHotel(@PathVariable String id) {
         hotelService.deleteHotel(id);
-        return new ResponseEntity<>(new ApiResponse("Hotel deleted successfully", true), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("Hotel deleted successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Update Hotel By Id", description = "Update the details of a hotel using it's ID.")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateHotel(@PathVariable String id, @RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(), false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("Hotel Updated Successfully", true, hotelService.updateHotel(id, hotelDTO)), HttpStatus.OK);
+        if (Boolean.TRUE.equals(hotelService.existByName(hotelDTO.getName()))) {
+            return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getName()), HttpStatus.BAD_REQUEST);
+        }
+        hotelService.updateHotel(id, hotelDTO);
+        return new ResponseEntity<>(new ApiResponse("Hotel Updated Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Get the Hotel by Id", description = "Fetch details of the Hotel by it's ID.")

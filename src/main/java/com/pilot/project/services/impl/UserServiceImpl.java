@@ -16,7 +16,7 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl implements UserService {
     private static final String USER = "User";
-    private static final String ID = "ID";
+    private static final String Email = "Email";
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
@@ -31,19 +31,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO saveUser(UserDTO userDTO) {
-        userDTO.setUserId(UUID.randomUUID().toString());
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-        User user = userRepository.save(
-                modelMapper.map(userDTO, User.class)
-        );
-        return modelMapper.map(user, UserDTO.class);
+        User user =modelMapper.map(userDTO, User.class);
+        user.setId(UUID.randomUUID().toString());
+        return modelMapper.map(userRepository.save(user), UserDTO.class);
     }
 
     @Override
-    public UserDTO updateUser(String id, UserDTO userDTO) {
-        User user = userRepository.findById(id)
+    public UserDTO updateUser(String email, UserDTO userDTO) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException(USER, ID, id)
+                        () -> new ResourceNotFoundException(USER, Email, email)
                 );
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
@@ -55,8 +53,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, Email, email));
         return modelMapper.map(user, UserDTO.class);
     }
 
@@ -67,8 +65,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
+    public void deleteUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, Email, email));
         userRepository.delete(user);
     }
 

@@ -16,7 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class User  {
     @Id
-    private String userId;
+    private String id;
     private String name;
     private String email;
     private String password;

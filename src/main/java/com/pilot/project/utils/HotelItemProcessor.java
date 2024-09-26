@@ -9,10 +9,10 @@ public class HotelItemProcessor implements ItemProcessor<Hotel, Hotel> {
     @Override
     public Hotel process(Hotel item) throws Exception {
         Hotel hotel = new Hotel();
-        hotel.setHotelId(UUID.randomUUID().toString());
-        hotel.setHotelName(item.getHotelName());
-        hotel.setHotelAddress(item.getHotelAddress());
-        hotel.setHotelCity(item.getHotelCity());
+        hotel.setId(UUID.randomUUID().toString());
+        hotel.setName(item.getName());
+        hotel.setAddress(item.getAddress());
+        hotel.setCity(item.getCity());
         return hotel;
     }
 }

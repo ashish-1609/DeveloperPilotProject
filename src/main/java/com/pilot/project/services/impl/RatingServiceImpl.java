@@ -21,6 +21,7 @@ public class RatingServiceImpl implements RatingService  {
     private static final String USER = "USER";
     private static final String HOTEL = "Hotel";
     private static final String ID = "ID";
+    private static final String EMAIL = "Email";
 
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
@@ -39,21 +40,21 @@ public class RatingServiceImpl implements RatingService  {
     }
 
     @Override
-    public RatingDTO saveRating(String userId, String hotelId, RatingDTO ratingDTO) {
-        ratingDTO.setRatingId(UUID.randomUUID().toString());
+    public RatingDTO saveRating(String email, String hotelId, RatingDTO ratingDTO) {
+        ratingDTO.setId(UUID.randomUUID().toString());
         Rating rating = modelMapper.map(ratingDTO, Rating.class);
-        rating.setUser(userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException(USER, ID, userId)));
+        rating.setUser(userRepository.findByEmail(email).orElseThrow(()-> new ResourceNotFoundException(USER, EMAIL, email)));
 
         rating.setHotel(hotelRepository.findById(hotelId).orElseThrow(()-> new ResourceNotFoundException(HOTEL, ID, hotelId)));
         return modelMapper.map(ratingRepository.save(rating), RatingDTO.class);
     }
 
     @Override
-    public RatingDTO updateRating(String userId, String hotelId, String id, RatingDTO ratingDTO) {
+    public RatingDTO updateRating(String email, String hotelId, String id, RatingDTO ratingDTO) {
         Rating rating = ratingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RATING, ID, id));
         rating.setPoints(ratingDTO.getPoints());
         rating.setHotel(hotelRepository.findById(hotelId).orElseThrow(()-> new ResourceNotFoundException(RATING, ID, hotelId)));
-        rating.setUser(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId)));
+        rating.setUser(userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email)));
         return modelMapper.map(
                 ratingRepository.save(rating),
                 RatingDTO.class);
@@ -82,8 +83,8 @@ public class RatingServiceImpl implements RatingService  {
     }
 
     @Override
-    public List<RatingDTO> findAllRatingsByUser(String userId) {
-        List<Rating> ratings = ratingRepository.findAllByUser(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId)));
+    public List<RatingDTO> findAllRatingsByUser(String email) {
+        List<Rating> ratings = ratingRepository.findAllByUser(userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email)));
         return ratings.stream().map(rating -> modelMapper.map(rating, RatingDTO.class)).toList();
     }
 
@@ -94,9 +95,9 @@ public class RatingServiceImpl implements RatingService  {
     }
 
     @Override
-    public void deleteAllRatingsByUser(String userId) {
+    public void deleteAllRatingsByUser(String email) {
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException(USER, EMAIL, email));
         List<Rating> allByUser = ratingRepository.findAllByUser(user);
         ratingRepository.deleteAll(allByUser);
     }

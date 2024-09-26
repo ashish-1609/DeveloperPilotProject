@@ -40,7 +40,7 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         userDTO = UserDTO.builder()
-                .userId(UUID.randomUUID().toString())
+                .id(UUID.randomUUID().toString())
                 .name("test")
                 .email("test@email.com")
                 .password("password")
@@ -77,7 +77,7 @@ class UserControllerTest {
     @Test
     void saveUser_validUser() {
         when(this.bindingResult.hasErrors()).thenReturn(false);
-        ApiResponse apiResponse = new ApiResponse("User Added Successfully", true, userDTO);
+        ApiResponse apiResponse = new ApiResponse("User Added Successfully");
         when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
         when(this.userService.saveUser(userDTO)).thenReturn(userDTO);
 
@@ -89,9 +89,9 @@ class UserControllerTest {
 
     @Test
     void updateUser() {
-        ApiResponse apiResponse = new ApiResponse("User Updated Successfully", true, userDTO);
-        when(this.userService.updateUser(userDTO.getUserId(), userDTO)).thenReturn(userDTO);
-        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getUserId(), userDTO, bindingResult);
+        ApiResponse apiResponse = new ApiResponse("User Updated Successfully");
+        when(this.userService.updateUser(userDTO.getId(), userDTO)).thenReturn(userDTO);
+        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getId(), userDTO, bindingResult);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }
@@ -99,7 +99,7 @@ class UserControllerTest {
     void updateUser_InvalidUser(){
         when(this.bindingResult.hasErrors()).thenReturn(true);
         when(this.bindingResult.getFieldError()).thenReturn(new FieldError("user", "name", "User's name cannot be empty."));
-        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getUserId(), userDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getId(), userDTO, bindingResult);
         assertEquals("User's name cannot be empty.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 
@@ -115,8 +115,8 @@ class UserControllerTest {
 
     @Test
     void getUserById() {
-        lenient().when(this.userService.getUserById(userDTO.getUserId())).thenReturn(userDTO);
-        ResponseEntity<UserDTO> responseEntity = this.userController.getUserById(userDTO.getUserId());
+        lenient().when(this.userService.getUserByEmail(userDTO.getId())).thenReturn(userDTO);
+        ResponseEntity<UserDTO> responseEntity = this.userController.getUserByEmail(userDTO.getId());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             assertEquals(userDTO, responseEntity.getBody());
         }else{
@@ -126,14 +126,14 @@ class UserControllerTest {
     @Test
     void getUserById_UserNotFound(){
         lenient().when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
-        ResponseEntity<UserDTO> responseEntity = this.userController.getUserById(userDTO.getUserId());
+        ResponseEntity<UserDTO> responseEntity = this.userController.getUserByEmail(userDTO.getId());
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
     void deleteUser() {
-        ResponseEntity<?> responseEntity = this.userController.deleteUser(userDTO.getUserId());
-        verify(this.userService, times(1)).deleteUser(userDTO.getUserId());
+        ResponseEntity<?> responseEntity = this.userController.deleteUser(userDTO.getId());
+        verify(this.userService, times(1)).deleteUser(userDTO.getId());
         assertEquals("User deleted Successfully.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 }

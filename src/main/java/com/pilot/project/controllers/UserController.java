@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @Tag(name = "User Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of users.")
 public class UserController {
 
@@ -30,24 +30,26 @@ public class UserController {
     @PostMapping("/")
     public ResponseEntity<ApiResponse> saveUser(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
         if(Boolean.TRUE.equals(userService.isUserExistByEmail(userDTO.getEmail()))) {
-            return new ResponseEntity<>(new ApiResponse("User Already Exist.", false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse("User Already Exist."), HttpStatus.BAD_REQUEST);
         }
         if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("User Added Successfully",true,userService.saveUser(userDTO)), HttpStatus.CREATED);
+        userService.saveUser(userDTO);
+        return new ResponseEntity<>(new ApiResponse("User Added Successfully"), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Update User By Id", description = "Update the details of a User using it's ID.")
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable String id,@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
+    @Operation(summary = "Update User By Email", description = "Update the details of a User using it's Email.")
+    @PutMapping("/{email}")
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable String email,@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(
                     new ApiResponse(
-                            Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false),
+                            Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()),
                             HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("User Updated Successfully", true, userService.updateUser(id, userDTO)), HttpStatus.OK);
+        userService.updateUser(email, userDTO);
+        return new ResponseEntity<>(new ApiResponse("User Updated Successfully"), HttpStatus.OK);
     }
 
     @Operation(summary = "Get All Users", description = "Fetch details of all the Users.")
@@ -56,21 +58,21 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get the User by Id", description = "Fetch details of the User by it's ID.")
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
-        if(Boolean.TRUE.equals(userService.isUserExistByUserid(id))) {
-            return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    @Operation(summary = "Get the User by Email", description = "Fetch details of the User by it's Email.")
+    @GetMapping("/{email}")
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+        if(Boolean.TRUE.equals(userService.isUserExistByEmail(email))) {
+            return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @Operation(summary = "Delete User By Id", description = "Delete the details of a User using it's ID.")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String id) {
-            userService.deleteUser(id);
-            return new ResponseEntity<>(new ApiResponse("User deleted Successfully.", true), HttpStatus.OK);
+    @DeleteMapping("/{email}")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable String email) {
+            userService.deleteUser(email);
+            return new ResponseEntity<>(new ApiResponse("User deleted Successfully."), HttpStatus.OK);
     }
 
 }

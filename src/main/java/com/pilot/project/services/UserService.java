@@ -7,9 +7,9 @@ import java.util.List;
 public interface UserService {
     UserDTO saveUser(UserDTO userDTO);
     UserDTO updateUser(String id, UserDTO userDTO);
-    UserDTO getUserById(String id);
+    UserDTO getUserByEmail(String email);
     List<UserDTO> getAllUsers();
-    void deleteUser(String id);
+    void deleteUser(String email);
     Boolean isUserExistByEmail(String email);
     Boolean isUserExistByUserid(String id);
 }

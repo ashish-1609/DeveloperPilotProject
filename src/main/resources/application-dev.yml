@@ -18,6 +18,8 @@ spring:
     baseline-on-migrate: true
   jpa:
     show-sql: true
+    hibernate:
+      ddl-auto: update
 management:
   endpoints:
     web:
@@ -33,3 +35,7 @@ springdoc:
   swagger-ui:
     csrf:
       enabled: false
+app:
+  file:
+    storage:
+      path: classpath:/

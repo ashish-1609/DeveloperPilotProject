@@ -29,7 +29,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public HotelDTO saveHotel(HotelDTO hotelDTO) {
-        hotelDTO.setHotelId(UUID.randomUUID().toString());
+        hotelDTO.setId(UUID.randomUUID().toString());
         Hotel hotel = hotelRepository.save(modelMapper.map(hotelDTO, Hotel.class));
         return modelMapper.map(hotel, HotelDTO.class);
     }
@@ -39,9 +39,9 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(
                     () -> new ResourceNotFoundException(HOTEL, ID, id));
-        hotel.setHotelName(hotelDTO.getHotelName());
-        hotel.setHotelAddress(hotelDTO.getHotelAddress());
-        hotel.setHotelCity(hotelDTO.getHotelCity());
+        hotel.setName(hotelDTO.getName());
+        hotel.setAddress(hotelDTO.getAddress());
+        hotel.setCity(hotelDTO.getCity());
         return modelMapper.map(hotelRepository.save(hotel), HotelDTO.class);
     }
 
@@ -70,7 +70,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public Boolean existByName(String hotelName) {
-        return hotelRepository.existsByHotelName(hotelName);
+        return hotelRepository.existsByName(hotelName);
     }
 
 }

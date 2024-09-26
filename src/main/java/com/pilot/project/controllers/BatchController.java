@@ -11,6 +11,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,8 @@ import java.util.Objects;
 public class BatchController {
     private final JobLauncher jobLauncher;
     private final Job hotelJob;
+    @Value("${app.file.storage.path}")
+    private static String path;
 
     @Autowired
     public BatchController(JobLauncher jobLauncher, Job hotelJob) {
@@ -39,15 +43,15 @@ public class BatchController {
 
         String fileName = file.getOriginalFilename();
         if (file.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponse("Empty file, Please insert a file", false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse("Empty file, Please insert a file"), HttpStatus.BAD_REQUEST);
         }
         if(!Objects.requireNonNull(file.getOriginalFilename()).contains(".csv")){
-            return new ResponseEntity<>(new ApiResponse("Invalid file, Please insert a .csv file", false), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse("Invalid file, Please insert a .csv file"), HttpStatus.BAD_REQUEST);
         }
-        if (fileName == null || fileName.isEmpty()) {
-            return new ResponseEntity<>(new ApiResponse("Empty file name, PLease Provide a valid file name", false), HttpStatus.BAD_REQUEST);
-        }
-        String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
+
+
+        String path = new ClassPathResource("/files/").getFile().getAbsolutePath();
+//        String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
         File fileToSave = new File(path +fileName);
         file.transferTo(fileToSave);
 
@@ -56,7 +60,7 @@ public class BatchController {
         .addLong("startAt", System.currentTimeMillis()).toJobParameters();
         try {
             jobLauncher.run(hotelJob, jobParameters);
-            return new ResponseEntity<>(new ApiResponse("Hotels Added Successfully", true), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse("Hotels Added Successfully"), HttpStatus.OK);
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
                  JobParametersInvalidException e) {
             throw new CustomJobExecutionException(e.getMessage());

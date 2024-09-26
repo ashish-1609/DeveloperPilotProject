@@ -43,10 +43,10 @@ class UserServiceImplTest {
     private List<User> userList;
     @BeforeEach
     void setUp() {
-        userDTO = UserDTO.builder().userId(UUID.randomUUID().toString()).name("test user").password("test").email("test@test.com").about("test about").build();
+        userDTO = UserDTO.builder().id(UUID.randomUUID().toString()).name("test user").password("test").email("test@test.com").about("test about").build();
 
         user = new User();
-        user.setUserId(userDTO.getUserId());
+        user.setId(userDTO.getId());
         user.setName(userDTO.getName());
         user.setPassword("encoded");
         user.setEmail(userDTO.getEmail());
@@ -64,7 +64,7 @@ class UserServiceImplTest {
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
         UserDTO savedUser = this.userService.saveUser(userDTO);
         assertNotNull(savedUser);
-        assertEquals(userDTO.getUserId(), savedUser.getUserId());
+        assertEquals(userDTO.getId(), savedUser.getId());
         assertEquals(userDTO.getName(), savedUser.getName());
         assertEquals(userDTO.getEmail(), savedUser.getEmail());
         assertEquals(userDTO.getAbout(), savedUser.getAbout());
@@ -75,36 +75,36 @@ class UserServiceImplTest {
     @Test
     @Order(2)
     void updateUser() {
-        when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
+        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(bCryptPasswordEncoder.encode(userDTO.getPassword())).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
-        UserDTO updatedUser = this.userService.updateUser(userDTO.getUserId(), userDTO);
+        UserDTO updatedUser = this.userService.updateUser(userDTO.getEmail(), userDTO);
         assertNotNull(userDTO);
-        assertEquals(userDTO.getUserId(), updatedUser.getUserId());
+        assertEquals(userDTO.getEmail(), updatedUser.getEmail());
         verify(this.userRepository).save(any(User.class));
 
     }
 
     @Test
     void updateUser_UserNotFound(){
-        when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.empty());
+        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::updateUserForTest);
     }
 
     private void updateUserForTest() {
-        this.userService.updateUser(userDTO.getUserId(), userDTO);
+        this.userService.updateUser(userDTO.getEmail(), userDTO);
     }
 
     @Test
     @Order(3)
     void getUserById() {
-        when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
+        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
-        UserDTO userById = this.userService.getUserById(userDTO.getUserId());
+        UserDTO userById = this.userService.getUserByEmail(userDTO.getEmail());
         assertNotNull(userById);
-        assertEquals(userDTO.getUserId(), userById.getUserId());
-        verify(this.userRepository, times(1)).findById(userDTO.getUserId());
+        assertEquals(userDTO.getEmail(), userById.getEmail());
+        verify(this.userRepository, times(1)).findByEmail(userDTO.getEmail());
     }
 
     @Test
@@ -121,8 +121,8 @@ class UserServiceImplTest {
     @Test
     @Order(5)
     void deleteUser() {
-        when(this.userRepository.findById(userDTO.getUserId())).thenReturn(Optional.of(user));
-        assertDoesNotThrow(() -> this.userService.deleteUser(userDTO.getUserId()));
+        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        assertDoesNotThrow(() -> this.userService.deleteUser(userDTO.getEmail()));
         verify(this.userRepository, times(1)).delete(user);
     }
 
@@ -136,8 +136,8 @@ class UserServiceImplTest {
 
     @Test
     void isUserExistByUserid(){
-        when(this.userRepository.existsById(userDTO.getUserId())).thenReturn(Boolean.TRUE);
-        assertTrue(this.userService.isUserExistByUserid(userDTO.getUserId()));
+        when(this.userRepository.existsById(userDTO.getId())).thenReturn(Boolean.TRUE);
+        assertTrue(this.userService.isUserExistByUserid(userDTO.getId()));
     }
 
 }

@@ -13,12 +13,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
         return new ResponseEntity<>(
                 new ApiResponse(
-                        ex.getMessage().toUpperCase(),false)
+                        ex.getMessage().toUpperCase())
                 , HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CustomJobExecutionException.class)
     public ResponseEntity<ApiResponse> customJobExecutionExceptionHandler(CustomJobExecutionException ex){
-        return new ResponseEntity<>(new ApiResponse(ex.getMessage().toUpperCase(), false), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiResponse(ex.getMessage().toUpperCase()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

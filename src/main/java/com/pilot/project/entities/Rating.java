@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Rating {
     @Id
-    private String ratingId;
+    private String id;
     private int points;
     private String comment;
     @ManyToOne(fetch = FetchType.EAGER)

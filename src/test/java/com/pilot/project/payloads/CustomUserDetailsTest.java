@@ -29,7 +29,7 @@ class CustomUserDetailsTest {
 
 
         user = new User();
-        user.setUserId(UUID.randomUUID().toString());
+        user.setId(UUID.randomUUID().toString());
         user.setName("Test User");
         user.setPassword("password");
         user.setEmail("test@email.com");

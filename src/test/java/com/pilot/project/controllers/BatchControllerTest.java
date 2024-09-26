@@ -41,7 +41,6 @@ class BatchControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Hotels Added Successfully", Objects.requireNonNull(response.getBody()).getMessage());
-        assertTrue(response.getBody().isSuccess());
 
         verify(jobLauncher, times(1)).run(any(Job.class), any(JobParameters.class));
     }
