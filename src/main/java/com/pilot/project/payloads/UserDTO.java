@@ -27,6 +27,6 @@ public class UserDTO {
     @NotBlank(message = "Password Cannot be empty.")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$", message = "Password Should Contain minimum eight characters, at least one letter, one number and one special character")
     private String password;
-    @Size(min = 0, max = 100, message = "About user must be in range of 0-100 characters.")
+    @Size(max = 100, message = "About user must be in range of 0-100 characters.")
     private String about;
 }

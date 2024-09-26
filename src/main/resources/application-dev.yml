@@ -35,7 +35,3 @@ springdoc:
   swagger-ui:
     csrf:
       enabled: false
-app:
-  file:
-    storage:
-      path: classpath:/

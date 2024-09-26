@@ -28,8 +28,6 @@ import java.util.Objects;
 public class BatchController {
     private final JobLauncher jobLauncher;
     private final Job hotelJob;
-    @Value("${app.file.storage.path}")
-    private static String path;
 
     @Autowired
     public BatchController(JobLauncher jobLauncher, Job hotelJob) {
