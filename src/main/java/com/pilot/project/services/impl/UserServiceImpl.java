@@ -33,15 +33,15 @@ public class UserServiceImpl implements UserService {
     public UserDTO saveUser(UserDTO userDTO) {
         userDTO.setUserId(UUID.randomUUID().toString());
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-        User user = this.userRepository.save(
-                this.modelMapper.map(userDTO, User.class)
+        User user = userRepository.save(
+                modelMapper.map(userDTO, User.class)
         );
-        return this.modelMapper.map(user, UserDTO.class);
+        return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
     public UserDTO updateUser(String id, UserDTO userDTO) {
-        User user = this.userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(USER, ID, id)
                 );
@@ -49,36 +49,36 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         user.setAbout(userDTO.getAbout());
-        return this.modelMapper.map(
-                this.userRepository.save(user), UserDTO.class
+        return modelMapper.map(
+                userRepository.save(user), UserDTO.class
         );
     }
 
     @Override
     public UserDTO getUserById(String id) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
-        return this.modelMapper.map(user, UserDTO.class);
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
+        return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
     public List<UserDTO> getAllUsers() {
-        List<User> users = this.userRepository.findAll();
-        return users.stream().map(user-> this.modelMapper.map(user, UserDTO.class)).toList();
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user-> modelMapper.map(user, UserDTO.class)).toList();
     }
 
     @Override
     public void deleteUser(String id) {
-        User user = this.userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
-        this.userRepository.delete(user);
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(USER, ID, id));
+        userRepository.delete(user);
     }
 
     @Override
     public Boolean isUserExistByEmail(String email) {
-            return this.userRepository.existsByEmail(email);
+            return userRepository.existsByEmail(email);
     }
 
     @Override
     public Boolean isUserExistByUserid(String id) {
-        return this.userRepository.existsById(id);
+        return userRepository.existsById(id);
     }
 }

@@ -30,47 +30,47 @@ public class HotelServiceImpl implements HotelService {
     @Override
     public HotelDTO saveHotel(HotelDTO hotelDTO) {
         hotelDTO.setHotelId(UUID.randomUUID().toString());
-        Hotel hotel = this.hotelRepository.save(this.modelMapper.map(hotelDTO, Hotel.class));
-        return this.modelMapper.map(hotel, HotelDTO.class);
+        Hotel hotel = hotelRepository.save(modelMapper.map(hotelDTO, Hotel.class));
+        return modelMapper.map(hotel, HotelDTO.class);
     }
 
     @Override
     public HotelDTO updateHotel(String id, HotelDTO hotelDTO) {
-        Hotel hotel = this.hotelRepository.findById(id)
+        Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(
                     () -> new ResourceNotFoundException(HOTEL, ID, id));
         hotel.setHotelName(hotelDTO.getHotelName());
         hotel.setHotelAddress(hotelDTO.getHotelAddress());
         hotel.setHotelCity(hotelDTO.getHotelCity());
-        return this.modelMapper.map(this.hotelRepository.save(hotel), HotelDTO.class);
+        return modelMapper.map(hotelRepository.save(hotel), HotelDTO.class);
     }
 
     @Override
     public List<HotelDTO> getHotels() {
-        return this.hotelRepository.findAll()
-                .stream().map(hotel -> this.modelMapper.map(hotel, HotelDTO.class))
+        return hotelRepository.findAll()
+                .stream().map(hotel -> modelMapper.map(hotel, HotelDTO.class))
                 .toList();
     }
 
     @Override
     public HotelDTO getHotelById(String hotelId) {
-        Hotel hotel = this.hotelRepository.findById(hotelId)
+        Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(HOTEL, ID,hotelId));
-        return this.modelMapper.map(hotel, HotelDTO.class);
+        return modelMapper.map(hotel, HotelDTO.class);
     }
 
     @Override
     public void deleteHotel(String hotelId) {
-        Hotel hotel = this.hotelRepository.findById(hotelId)
+        Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(HOTEL, ID,hotelId));
-        this.hotelRepository.delete(hotel);
+        hotelRepository.delete(hotel);
     }
 
     @Override
     public Boolean existByName(String hotelName) {
-        return this.hotelRepository.existsByHotelName(hotelName);
+        return hotelRepository.existsByHotelName(hotelName);
     }
 
 }

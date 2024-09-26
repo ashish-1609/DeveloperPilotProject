@@ -32,4 +32,4 @@ logging:
 springdoc:
   swagger-ui:
     csrf:
-      enabled: true
+      enabled: false

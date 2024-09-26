@@ -11,6 +11,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 @RestController
 public class BatchController {
@@ -37,7 +39,15 @@ public class BatchController {
 
 
         String fileName = file.getOriginalFilename();
-        assert fileName != null;
+        if (file.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse("Empty file, Please insert a file", false), HttpStatus.BAD_REQUEST);
+        }
+        if(!Objects.requireNonNull(file.getOriginalFilename()).contains(".csv")){
+            return new ResponseEntity<>(new ApiResponse("Invalid file, Please insert a .csv file", false), HttpStatus.BAD_REQUEST);
+        }
+        if (fileName == null || fileName.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse("Empty file name, PLease Provide a valid file name", false), HttpStatus.BAD_REQUEST);
+        }
         String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
         File fileToSave = new File(path +fileName);
         file.transferTo(fileToSave);

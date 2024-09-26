@@ -29,13 +29,13 @@ public class UserController {
     @Operation(summary = "Add User", description = "Add user in the system.")
     @PostMapping("/")
     public ResponseEntity<ApiResponse> saveUser(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
-        if(Boolean.TRUE.equals(this.userService.isUserExistByEmail(userDTO.getEmail()))) {
+        if(Boolean.TRUE.equals(userService.isUserExistByEmail(userDTO.getEmail()))) {
             return new ResponseEntity<>(new ApiResponse("User Already Exist.", false), HttpStatus.BAD_REQUEST);
         }
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("User Added Successfully",true,this.userService.saveUser(userDTO)), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse("User Added Successfully",true,userService.saveUser(userDTO)), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Update User By Id", description = "Update the details of a User using it's ID.")
@@ -47,20 +47,20 @@ public class UserController {
                             Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage(),false),
                             HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(new ApiResponse("User Updated Successfully", true, this.userService.updateUser(id, userDTO)), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse("User Updated Successfully", true, userService.updateUser(id, userDTO)), HttpStatus.OK);
     }
 
     @Operation(summary = "Get All Users", description = "Fetch details of all the Users.")
     @GetMapping("/")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        return new ResponseEntity<>(this.userService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @Operation(summary = "Get the User by Id", description = "Fetch details of the User by it's ID.")
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
-        if(Boolean.TRUE.equals(this.userService.isUserExistByUserid(id))) {
-            return new ResponseEntity<>(this.userService.getUserById(id), HttpStatus.OK);
+        if(Boolean.TRUE.equals(userService.isUserExistByUserid(id))) {
+            return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -69,7 +69,7 @@ public class UserController {
     @Operation(summary = "Delete User By Id", description = "Delete the details of a User using it's ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable String id) {
-            this.userService.deleteUser(id);
+            userService.deleteUser(id);
             return new ResponseEntity<>(new ApiResponse("User deleted Successfully.", true), HttpStatus.OK);
     }
 

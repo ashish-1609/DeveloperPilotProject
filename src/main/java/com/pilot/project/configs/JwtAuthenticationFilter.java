@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             jwtToken = authHeader.substring(7);
             try {
-                username=this.jwtTokenHelper.getUsernameFromToken(jwtToken);
+                username=jwtTokenHelper.getUsernameFromToken(jwtToken);
             }
             catch(IllegalArgumentException e) {
                 logger.error("Unable to get JWT Token");
@@ -55,8 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         if(username!= null && SecurityContextHolder.getContext().getAuthentication()==null) {
-            UserDetails user = this.userDetailsService.loadUserByUsername(username);
-            if(Boolean.TRUE.equals(this.jwtTokenHelper.validateToken(jwtToken,user))) {
+            UserDetails user = userDetailsService.loadUserByUsername(username);
+            if(Boolean.TRUE.equals(jwtTokenHelper.validateToken(jwtToken,user))) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, user.getAuthorities());
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

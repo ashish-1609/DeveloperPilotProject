@@ -41,74 +41,74 @@ public class RatingServiceImpl implements RatingService  {
     @Override
     public RatingDTO saveRating(String userId, String hotelId, RatingDTO ratingDTO) {
         ratingDTO.setRatingId(UUID.randomUUID().toString());
-        Rating rating = this.modelMapper.map(ratingDTO, Rating.class);
+        Rating rating = modelMapper.map(ratingDTO, Rating.class);
         rating.setUser(userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException(USER, ID, userId)));
 
         rating.setHotel(hotelRepository.findById(hotelId).orElseThrow(()-> new ResourceNotFoundException(HOTEL, ID, hotelId)));
-        return this.modelMapper.map(this.ratingRepository.save(rating), RatingDTO.class);
+        return modelMapper.map(ratingRepository.save(rating), RatingDTO.class);
     }
 
     @Override
     public RatingDTO updateRating(String userId, String hotelId, String id, RatingDTO ratingDTO) {
-        Rating rating = this.ratingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RATING, ID, id));
+        Rating rating = ratingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RATING, ID, id));
         rating.setPoints(ratingDTO.getPoints());
-        rating.setHotel(this.hotelRepository.findById(hotelId).orElseThrow(()-> new ResourceNotFoundException(RATING, ID, hotelId)));
-        rating.setUser(this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId)));
-        return this.modelMapper.map(
-                this.ratingRepository.save(rating),
+        rating.setHotel(hotelRepository.findById(hotelId).orElseThrow(()-> new ResourceNotFoundException(RATING, ID, hotelId)));
+        rating.setUser(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId)));
+        return modelMapper.map(
+                ratingRepository.save(rating),
                 RatingDTO.class);
     }
 
     @Override
     public void deleteRating(String id) {
-        Rating rating = this.ratingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RATING, ID, id));
-        this.ratingRepository.delete(rating);
+        Rating rating = ratingRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(RATING, ID, id));
+        ratingRepository.delete(rating);
     }
 
     @Override
     public List<RatingDTO> getRatings() {
-        List<Rating> ratings = this.ratingRepository.findAll();
+        List<Rating> ratings = ratingRepository.findAll();
         return ratings.stream().map(
-                rating -> this.modelMapper.map(rating, RatingDTO.class)
+                rating -> modelMapper.map(rating, RatingDTO.class)
         ).toList();
     }
 
     @Override
     public RatingDTO getRatingById(String id) {
-        return this.modelMapper.map(
-                this.ratingRepository.findById(id)
+        return modelMapper.map(
+                ratingRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException(RATING, ID, id)),
                 RatingDTO.class);
     }
 
     @Override
     public List<RatingDTO> findAllRatingsByUser(String userId) {
-        List<Rating> ratings = this.ratingRepository.findAllByUser(this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId)));
-        return ratings.stream().map(rating -> this.modelMapper.map(rating, RatingDTO.class)).toList();
+        List<Rating> ratings = ratingRepository.findAllByUser(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId)));
+        return ratings.stream().map(rating -> modelMapper.map(rating, RatingDTO.class)).toList();
     }
 
     @Override
     public List<RatingDTO> findAllRatingsByHotel(String hotelId) {
-        List<Rating> ratings = this.ratingRepository.findAllByHotel(this.hotelRepository.findById(hotelId).orElseThrow(() -> new ResourceNotFoundException(HOTEL, ID, hotelId)));
-        return ratings.stream().map(rating -> this.modelMapper.map(rating, RatingDTO.class)).toList();
+        List<Rating> ratings = ratingRepository.findAllByHotel(hotelRepository.findById(hotelId).orElseThrow(() -> new ResourceNotFoundException(HOTEL, ID, hotelId)));
+        return ratings.stream().map(rating -> modelMapper.map(rating, RatingDTO.class)).toList();
     }
 
     @Override
     public void deleteAllRatingsByUser(String userId) {
 
-        User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId));
-        List<Rating> allByUser = this.ratingRepository.findAllByUser(user);
-        this.ratingRepository.deleteAll(allByUser);
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException(USER, ID, userId));
+        List<Rating> allByUser = ratingRepository.findAllByUser(user);
+        ratingRepository.deleteAll(allByUser);
     }
 
     @Override
     public void deleteAllRatingsByHotel(String hotelId) {
-        List<Rating> ratings = this.ratingRepository.findAllByHotel(this.hotelRepository.findById(hotelId).orElseThrow(() -> new ResourceNotFoundException(HOTEL, ID, hotelId)));
-        this.ratingRepository.deleteAll(ratings);
+        List<Rating> ratings = ratingRepository.findAllByHotel(hotelRepository.findById(hotelId).orElseThrow(() -> new ResourceNotFoundException(HOTEL, ID, hotelId)));
+        ratingRepository.deleteAll(ratings);
     }
 
     @Override
     public void deleteAllRatings() {
-        this.ratingRepository.deleteAll();
+        ratingRepository.deleteAll();
     }
 }

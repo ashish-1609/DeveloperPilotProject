@@ -11,11 +11,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -42,8 +43,8 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(this.userDetailsService());
-        daoAuthenticationProvider.setPasswordEncoder(this.bCryptPasswordEncoder());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
         daoAuthenticationProvider.setHideUserNotFoundExceptions(true);
         return daoAuthenticationProvider;
     }
@@ -55,7 +56,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf-> csrf.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()));
+        http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(request->{
                     request.requestMatchers("/api/hotels/**").authenticated();
                     request.requestMatchers("/api/ratings/**").authenticated();
@@ -68,8 +69,8 @@ public class SecurityConfig {
                 .logout(httpSecurityLogoutConfigurer -> httpSecurityLogoutConfigurer.logoutUrl("/logout").permitAll().logoutSuccessUrl("/swagger-ui.html"))
                 .exceptionHandling(
                         exception->
-                             exception.authenticationEntryPoint(this.jwtAuthenticationEntryPoint)
-                ).addFilterBefore(this.jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                             exception.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                ).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.authenticationProvider(daoAuthenticationProvider());
         return http.build();
     }

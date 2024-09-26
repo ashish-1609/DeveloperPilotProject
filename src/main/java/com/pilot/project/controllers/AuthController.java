@@ -33,8 +33,8 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<JwtAuthResponse> createToken(@RequestBody JwtAuthRequest jwtAuthRequest)throws Exception {
-        this.authentication(jwtAuthRequest.getUsername(), jwtAuthRequest.getPassword());
-        String token = this.jwtTokenHelper.generateToken(this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername()));
+        authentication(jwtAuthRequest.getUsername(), jwtAuthRequest.getPassword());
+        String token = jwtTokenHelper.generateToken(userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername()));
         JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
         jwtAuthResponse.setToken(token);
         return new ResponseEntity<>(jwtAuthResponse, HttpStatus.ACCEPTED);
@@ -43,7 +43,7 @@ public class AuthController {
     private void authentication(String username, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         try {
-            this.authenticationManager.authenticate(authenticationToken);
+            authenticationManager.authenticate(authenticationToken);
         }catch (DisabledException e) {
             throw new DisabledException("User is disabled");
         }
