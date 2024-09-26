@@ -1,6 +1,7 @@
 package com.pilot.project.payloads;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,7 +24,9 @@ public class RatingDTO {
     @NotBlank(message = "Comment Field Cannot be empty.")
     private String comment;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(hidden = true, accessMode = Schema.AccessMode.READ_ONLY)
     private UserDTO user;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Schema(hidden = true, accessMode = Schema.AccessMode.READ_ONLY)
     private HotelDTO hotel;
 }
