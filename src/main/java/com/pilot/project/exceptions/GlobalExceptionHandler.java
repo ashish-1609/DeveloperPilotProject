@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
+    public ResponseEntity<ApiResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
         return new ResponseEntity<>(
                 new ApiResponse(
                         ex.getMessage().toUpperCase())
                 , HttpStatus.NOT_FOUND);
     }
-
-    @ExceptionHandler(CustomJobExecutionException.class)
-    public ResponseEntity<ApiResponse> customJobExecutionExceptionHandler(CustomJobExecutionException ex){
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> genericExceptionHandler(Exception ex) {
         return new ResponseEntity<>(new ApiResponse(ex.getMessage().toUpperCase()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

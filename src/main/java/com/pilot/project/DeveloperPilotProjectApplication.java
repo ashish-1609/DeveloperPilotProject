@@ -10,11 +10,8 @@ import java.util.UUID;
 @SpringBootApplication
 public class DeveloperPilotProjectApplication {
 
-    private static final Logger logger = LogManager.getLogger(DeveloperPilotProjectApplication.class);
-
     public static void main(String[] args) {
         SpringApplication.run(DeveloperPilotProjectApplication.class, args);
-        logger.info(UUID.randomUUID().toString());
     }
 
 }

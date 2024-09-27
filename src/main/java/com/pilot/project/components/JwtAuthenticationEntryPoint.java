@@ -1,4 +1,4 @@
-package com.pilot.project.configs;
+package com.pilot.project.components;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

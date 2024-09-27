@@ -1,5 +1,6 @@
 package com.pilot.project.utils;
 
+import com.pilot.project.components.HotelItemProcessor;
 import com.pilot.project.entities.Hotel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

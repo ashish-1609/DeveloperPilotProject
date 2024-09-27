@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/ratings")
+@Log4j2
 @Tag(name = "Rating Controller", description = "Perform all the operation for adding, fetching, deleting and modifying the Details of Ratings.")
 public class RatingController {
     private final RatingService ratingService;
 
-    private static final Logger LOGGER = LogManager.getLogger(RatingController.class);
 
     @Autowired
     public RatingController(RatingService ratingService) {
@@ -72,7 +73,7 @@ public class RatingController {
     @Operation(summary = "Get All Ratings", description = "Fetch details of All Ratings.")
     @GetMapping("/")
     public ResponseEntity<List<RatingDTO>> getAllRatings(){
-        LOGGER.info("Get All Ratings");
+        log.info("Get All Ratings");
         return new ResponseEntity<>(ratingService.getRatings(), HttpStatus.OK);
     }
 

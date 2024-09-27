@@ -1,5 +1,6 @@
 package com.pilot.project.configs;
 
+import com.pilot.project.components.JwtAuthenticationEntryPoint;
 import com.pilot.project.services.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

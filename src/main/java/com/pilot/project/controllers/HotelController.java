@@ -34,7 +34,6 @@ public class HotelController {
     @PostMapping("/")
     public ResponseEntity<ApiResponse> saveHotel(@RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-
             return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString()), HttpStatus.BAD_REQUEST);
         }
         if (Boolean.TRUE.equals(hotelService.existByName(hotelDTO.getName()))) {
@@ -47,6 +46,9 @@ public class HotelController {
     @Operation(summary = "Delete Hotel By Id", description = "Delete the details of a hotel using it's ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteHotel(@PathVariable String id) {
+        if(hotelService.getHotelById(id)==null) {
+            return new ResponseEntity<>(new ApiResponse("Hotel Not Found"), HttpStatus.NOT_FOUND);
+        }
         hotelService.deleteHotel(id);
         return new ResponseEntity<>(new ApiResponse("Hotel deleted successfully"), HttpStatus.OK);
     }

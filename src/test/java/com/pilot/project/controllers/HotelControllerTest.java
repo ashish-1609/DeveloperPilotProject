@@ -82,6 +82,8 @@ class HotelControllerTest {
 
     @Test
     void deleteHotel() {
+        when(this.hotelService.getHotelById(hotelDTO.getId())).thenReturn(hotelDTO);
+        assertNotNull(this.hotelController.getHotelById(hotelDTO.getId()));
         ResponseEntity<ApiResponse> apiResponseResponseEntity = this.hotelController.deleteHotel(hotelDTO.getId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
         assertEquals("Hotel deleted successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());

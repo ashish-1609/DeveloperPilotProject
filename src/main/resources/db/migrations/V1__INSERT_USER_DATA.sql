@@ -1,1 +1,0 @@
-INSERT INTO user (user_id, name, email, password, about) VALUES ("ba53f660-1135-434b-b05f-38ea910ca216", "User 2", "user2@gmail.com", "121345@mvc","this is a test user");

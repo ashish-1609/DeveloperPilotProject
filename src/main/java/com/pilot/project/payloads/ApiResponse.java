@@ -1,13 +1,8 @@
 package com.pilot.project.payloads;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @EqualsAndHashCode
 public class ApiResponse {
     private String message;

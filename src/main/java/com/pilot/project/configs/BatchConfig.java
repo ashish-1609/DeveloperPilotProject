@@ -1,8 +1,8 @@
 package com.pilot.project.configs;
 
+import com.pilot.project.components.HotelItemProcessor;
+import com.pilot.project.components.JobCompletionNotificationListener;
 import com.pilot.project.entities.Hotel;
-import com.pilot.project.utils.HotelItemProcessor;
-import com.pilot.project.utils.JobCompletionNotificationListener;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -36,7 +36,7 @@ public class BatchConfig {
     @StepScope
     public FlatFileItemReader<Hotel> reader(@Value("#{jobParameters[fullPathFileName]}") String pathFile ){
         return new FlatFileItemReaderBuilder<Hotel>()
-                .name("hotelItemReader")
+                .name("reader")
                 .resource(new FileSystemResource(new File(pathFile)))
                 .delimited()
                 .names("hotelId","hotelName", "hotelAddress", "hotelCity")

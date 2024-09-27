@@ -11,9 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DeveloperPilotProjectApplicationTests {
 
 
-    @Test
-    void contextLoads() {
-    }
 
     @Test
     void main() {

@@ -1,6 +1,5 @@
 package com.pilot.project.controllers;
 
-import com.pilot.project.exceptions.CustomJobExecutionException;
 import com.pilot.project.payloads.ApiResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

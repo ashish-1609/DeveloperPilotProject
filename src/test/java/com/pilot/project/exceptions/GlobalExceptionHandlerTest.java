@@ -34,15 +34,5 @@ class GlobalExceptionHandlerTest {
         assertEquals(resourceNotFoundException.getMessage().toUpperCase(), Objects.requireNonNull(apiResponseResponseEntity.getBody()).getMessage());
     }
 
-    @Test
-    void customJobExecutionExceptionHandler(){
-        CustomJobExecutionException customJobExecutionException = new CustomJobExecutionException("Job Execution Exception");
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = globalExceptionHandler.customJobExecutionExceptionHandler(customJobExecutionException);
-        assertNotNull(apiResponseResponseEntity);
-        assertNotNull(apiResponseResponseEntity.getBody());
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR,apiResponseResponseEntity.getStatusCode());
-        assertEquals(customJobExecutionException.getMessage().toUpperCase(), Objects.requireNonNull(apiResponseResponseEntity.getBody()).getMessage());
-
-    }
 
 }

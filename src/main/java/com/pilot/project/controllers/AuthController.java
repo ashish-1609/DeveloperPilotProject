@@ -1,6 +1,6 @@
 package com.pilot.project.controllers;
 
-import com.pilot.project.configs.JwtTokenHelper;
+import com.pilot.project.components.JwtTokenHelper;
 import com.pilot.project.payloads.JwtAuthRequest;
 import com.pilot.project.payloads.JwtAuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;

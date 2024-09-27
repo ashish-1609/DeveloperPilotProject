@@ -1,4 +1,4 @@
-package com.pilot.project.configs;
+package com.pilot.project.components;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

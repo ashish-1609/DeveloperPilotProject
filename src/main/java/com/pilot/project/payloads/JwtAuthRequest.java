@@ -2,8 +2,7 @@ package com.pilot.project.payloads;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtAuthRequest {
