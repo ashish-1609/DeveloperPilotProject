@@ -25,13 +25,7 @@ class BatchControllerTest {
     private BatchController batchController;
 
     @Mock
-    private MockMvc mockMvc;
-
-    @Mock
     private JobLauncher jobLauncher;
-
-    @Mock
-    private Job hotelJob;
 
     @Test
     void testHotelBatchController_Success() throws Exception {
@@ -46,7 +40,6 @@ class BatchControllerTest {
 
     @Test
     void testHotelBatchController_JobExecutionAlreadyRunning() throws Exception {
-        MockMultipartFile file = new MockMultipartFile("file", "hotels.csv", "text/csv", "some data".getBytes());
 
         doThrow(new JobExecutionAlreadyRunningException("Job already running"))
                 .when(jobLauncher).run(any(Job.class), any(JobParameters.class));
