@@ -4,6 +4,7 @@ import com.pilot.project.payloads.ApiResponse;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class BatchController {
     }
 
     @PostMapping("/hotels-upload/")
-    public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
         if (file.isEmpty()) {
             return new ResponseEntity<>(new ApiResponse("Empty file, Please insert a valid file"), HttpStatus.BAD_REQUEST);
@@ -37,8 +38,8 @@ public class BatchController {
         if (!Objects.requireNonNull(file.getOriginalFilename()).contains(".csv")) {
             return new ResponseEntity<>(new ApiResponse("Invalid file, Please insert a .csv file"), HttpStatus.BAD_REQUEST);
         }
-//        String path = new UrlResource("/").getFile().getAbsolutePath();
-        String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
+        String path = new ClassPathResource("/").getFile().getAbsolutePath();
+//        String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
         File fileToSave = new File(path + fileName);
         try {
             file.transferTo(fileToSave);
