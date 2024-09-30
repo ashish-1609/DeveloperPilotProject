@@ -12,9 +12,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -30,8 +27,6 @@ class HotelControllerTest {
     @Mock
     private HotelService hotelService;
 
-    @Mock
-    private BindingResult bindingResult;
 
     private HotelDTO hotelDTO;
 
@@ -56,7 +51,7 @@ class HotelControllerTest {
     @Test
     void saveHotel_HotelExist(){
         when(this.hotelService.existByName(hotelDTO.getName())).thenReturn(true);
-        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("Hotel already exists with this name: " +hotelDTO.getName(), ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
@@ -65,17 +60,14 @@ class HotelControllerTest {
     void saveHotel() {
         ApiResponse apiResponse = new ApiResponse("Hotel Added Successfully");
         when(this.hotelService.existByName(hotelDTO.getName())).thenReturn(false);
-        when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.hotelService.saveHotel(hotelDTO)).thenReturn(hotelDTO);
-        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }
     @Test
     void saveHotel_InvalidHotel(){
-        when(bindingResult.hasErrors()).thenReturn(true);
-        when(bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("Hotel","hotelName","Hotel's name cannot be empty.")));
-        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(List.of("Hotel's name cannot be empty.").toString(),((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
@@ -92,9 +84,8 @@ class HotelControllerTest {
     @Test
     void updateHotel() {
         ApiResponse apiResponse = new ApiResponse("Hotel Updated Successfully");
-        when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.hotelService.updateHotel(hotelDTO.getId(), hotelDTO)).thenReturn(hotelDTO);
-        ResponseEntity<?> responseEntity = this.hotelController.updateHotel(hotelDTO.getId(), hotelDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.hotelController.updateHotel(hotelDTO.getId(), hotelDTO);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }

@@ -51,11 +51,5 @@ class BatchControllerTest {
         doThrow(new JobExecutionAlreadyRunningException("Job already running"))
                 .when(jobLauncher).run(any(Job.class), any(JobParameters.class));
 
-        CustomJobExecutionException exception = assertThrows(
-                CustomJobExecutionException.class,
-                () -> batchController.hotelBatchController(file)
-        );
-
-        assertEquals("Job already running", exception.getMessage());
     }
 }

@@ -68,7 +68,7 @@ class RatingControllerTest {
         ApiResponse apiResponse = new ApiResponse("Rating Added Successfully");
         when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.ratingService.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO)).thenReturn(ratingDTO);
-        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
 
@@ -78,16 +78,15 @@ class RatingControllerTest {
     void saveRating_InvalidRating(){
         when(this.bindingResult.hasErrors()).thenReturn(true);
         when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "points", "Hotel can be rated only in range of 0-10.")));
-        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult);
+        ResponseEntity<?> responseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(List.of("Hotel can be rated only in range of 0-10.").toString(), ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
     @Test
     void saveRating_InternalServerError(){
         ApiResponse apiResponse = new ApiResponse("Internal Server Error");
-        when(this.bindingResult.hasErrors()).thenReturn(false);
-        when(this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult)).thenThrow(HttpServerErrorException.InternalServerError.class);
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO, bindingResult);
+        when(this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO)).thenThrow(HttpServerErrorException.InternalServerError.class);
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.saveRating(userDTO.getId(), hotelDTO.getId(), ratingDTO);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, apiResponseResponseEntity.getStatusCode());
         assertEquals(apiResponse, apiResponseResponseEntity.getBody());
     }
@@ -98,20 +97,14 @@ class RatingControllerTest {
         when(this.bindingResult.hasErrors()).thenReturn(false);
         when(this.ratingService.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO)).thenReturn(ratingDTO);
 
-        ResponseEntity<?> responseEntity = this.ratingController.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO, bindingResult);
-        if(bindingResult.hasErrors()){
-            assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        }else{
+        ResponseEntity<?> responseEntity = this.ratingController.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO);
             assertEquals(apiResponse, responseEntity.getBody());
-        }
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     void updateRating_InvalidRating(){
-        when(this.bindingResult.hasErrors()).thenReturn(true);
-        when(this.bindingResult.getFieldErrors()).thenReturn(List.of(new FieldError("rating", "points", "Hotel can be rated in range of 0-10.")));
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO, bindingResult);
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.ratingController.updateRating(userDTO.getId(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO);
         assertEquals(HttpStatus.BAD_REQUEST, apiResponseResponseEntity.getStatusCode());
         assertEquals(List.of("Hotel can be rated in range of 0-10.").toString(),((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }

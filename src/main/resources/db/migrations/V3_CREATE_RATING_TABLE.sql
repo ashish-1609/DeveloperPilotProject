@@ -1,0 +1,1 @@
+create table rating (id varchar(255) not null, comment varchar(255), points integer not null, hotel_id varchar(255), user_id varchar(255), primary key (id));

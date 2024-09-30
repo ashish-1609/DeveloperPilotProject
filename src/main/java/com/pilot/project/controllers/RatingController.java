@@ -34,12 +34,7 @@ public class RatingController {
 
     @Operation(summary = "Add Rating", description = "Add Rating in the system, and provide the user id and hotel id.")
     @PostMapping("/user/{email}/hotel/{hotelId}")
-    public ResponseEntity<ApiResponse> saveRating(@PathVariable String email, @PathVariable String hotelId, @RequestBody @Valid RatingDTO ratingDTO, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(
-                    DefaultMessageSourceResolvable::getDefaultMessage
-            ).toList().toString()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ApiResponse> saveRating(@PathVariable String email, @PathVariable String hotelId, @RequestBody @Valid RatingDTO ratingDTO) {
         try{
             ratingService.saveRating(email, hotelId, ratingDTO);
             return new ResponseEntity<>(new ApiResponse("Rating Added Successfully"), HttpStatus.OK);
@@ -54,11 +49,7 @@ public class RatingController {
             @PathVariable String email,
             @PathVariable String hotelId,
             @PathVariable String ratingId,
-            @RequestBody @Valid RatingDTO ratingDTO,
-            BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString()), HttpStatus.BAD_REQUEST);
-        }
+            @RequestBody @Valid RatingDTO ratingDTO) {
         ratingService.updateRating(email, hotelId,ratingId, ratingDTO);
         return new ResponseEntity<>(new ApiResponse("Rating Updated Successfully"), HttpStatus.OK);
     }

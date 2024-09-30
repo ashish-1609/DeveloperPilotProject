@@ -28,12 +28,9 @@ public class UserController {
     }
     @Operation(summary = "Add User", description = "Add user in the system.")
     @PostMapping("/")
-    public ResponseEntity<ApiResponse> saveUser(@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponse> saveUser(@RequestBody @Valid UserDTO userDTO) {
         if(Boolean.TRUE.equals(userService.isUserExistByEmail(userDTO.getEmail()))) {
             return new ResponseEntity<>(new ApiResponse("User Already Exist."), HttpStatus.BAD_REQUEST);
-        }
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()), HttpStatus.BAD_REQUEST);
         }
         userService.saveUser(userDTO);
         return new ResponseEntity<>(new ApiResponse("User Added Successfully"), HttpStatus.CREATED);
@@ -41,13 +38,7 @@ public class UserController {
 
     @Operation(summary = "Update User By Email", description = "Update the details of a User using it's Email.")
     @PutMapping("/{email}")
-    public ResponseEntity<ApiResponse> updateUser(@PathVariable String email,@RequestBody @Valid UserDTO userDTO, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(
-                    new ApiResponse(
-                            Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()),
-                            HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ApiResponse> updateUser(@PathVariable String email,@RequestBody @Valid UserDTO userDTO) {
         userService.updateUser(email, userDTO);
         return new ResponseEntity<>(new ApiResponse("User Updated Successfully"), HttpStatus.OK);
     }

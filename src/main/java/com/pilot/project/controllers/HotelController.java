@@ -7,14 +7,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/hotels")
@@ -32,10 +29,7 @@ public class HotelController {
 
     @Operation(summary = "Add Hotel", description = "Add hotel in the system.")
     @PostMapping("/")
-    public ResponseEntity<ApiResponse> saveHotel(@RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(new ApiResponse(bindingResult.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().toString()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ApiResponse> saveHotel(@RequestBody @Valid HotelDTO hotelDTO) {
         if (Boolean.TRUE.equals(hotelService.existByName(hotelDTO.getName()))) {
             return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getName()), HttpStatus.BAD_REQUEST);
         }
@@ -55,10 +49,7 @@ public class HotelController {
 
     @Operation(summary = "Update Hotel By Id", description = "Update the details of a hotel using it's ID.")
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateHotel(@PathVariable String id, @RequestBody @Valid HotelDTO hotelDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(new ApiResponse(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<ApiResponse> updateHotel(@PathVariable String id, @RequestBody @Valid HotelDTO hotelDTO) {
         if (Boolean.TRUE.equals(hotelService.existByName(hotelDTO.getName()))) {
             return new ResponseEntity<>(new ApiResponse("Hotel already exists with this name: " + hotelDTO.getName()), HttpStatus.BAD_REQUEST);
         }

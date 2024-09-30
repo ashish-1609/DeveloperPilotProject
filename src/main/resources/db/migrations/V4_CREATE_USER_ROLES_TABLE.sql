@@ -1,0 +1,1 @@
+create table user_roles (user_id varchar(255) not null, role_id integer not null, primary key (user_id, role_id));
