@@ -13,10 +13,5 @@ import lombok.*;
 public class Role {
     @Id
     private int id;
-    @Enumerated(EnumType.STRING)
-    private RoleType roleType;
-}
- enum RoleType{
-    ROLE_ADMIN,
-    ROLE_USER
+    private String roleType;
 }

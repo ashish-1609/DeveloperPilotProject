@@ -3,6 +3,7 @@ package com.pilot.project.services.impl;
 import com.pilot.project.entities.User;
 import com.pilot.project.exceptions.ResourceNotFoundException;
 import com.pilot.project.payloads.UserDTO;
+import com.pilot.project.repositories.RoleRepository;
 import com.pilot.project.repositories.UserRepository;
 import com.pilot.project.services.UserService;
 import org.modelmapper.ModelMapper;
@@ -19,12 +20,14 @@ public class UserServiceImpl implements UserService {
     private static final String Email = "Email";
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper modelMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, ModelMapper modelMapper, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.modelMapper = modelMapper;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -34,6 +37,7 @@ public class UserServiceImpl implements UserService {
         userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         User user =modelMapper.map(userDTO, User.class);
         user.setId(UUID.randomUUID().toString());
+        user.getRoles().add(roleRepository.findById(1).orElseThrow(()-> new ResourceNotFoundException("Role", "id", user.getId())));
         return modelMapper.map(userRepository.save(user), UserDTO.class);
     }
 

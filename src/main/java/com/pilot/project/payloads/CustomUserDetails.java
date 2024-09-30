@@ -1,5 +1,6 @@
 package com.pilot.project.payloads;
 
+import com.pilot.project.entities.Role;
 import com.pilot.project.entities.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,6 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
@@ -17,9 +20,7 @@ public class CustomUserDetails implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.toString()))
-                .collect(Collectors.toSet());
+        return user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getRoleType())).collect(Collectors.toSet());
     }
 
     @Override
