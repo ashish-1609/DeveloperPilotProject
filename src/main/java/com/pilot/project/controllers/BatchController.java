@@ -29,7 +29,7 @@ public class BatchController {
     }
 
     @PostMapping("/hotels-upload/")
-    public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<ApiResponse> hotelBatchController(@RequestParam("file") MultipartFile file) {
         String fileName = file.getOriginalFilename();
         if (file.isEmpty()) {
             return new ResponseEntity<>(new ApiResponse("Empty file, Please insert a valid file"), HttpStatus.BAD_REQUEST);
@@ -37,7 +37,12 @@ public class BatchController {
         if (!Objects.requireNonNull(file.getOriginalFilename()).contains(".csv")) {
             return new ResponseEntity<>(new ApiResponse("Invalid file, Please insert a .csv file"), HttpStatus.BAD_REQUEST);
         }
-        String path = new ClassPathResource("/").getFile().getAbsolutePath();
+        String path = null;
+        try {
+            path = new ClassPathResource("/").getFile().getAbsolutePath();
+        } catch (IOException e) {
+            return new ResponseEntity<>(new ApiResponse("Resource not found."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 //        String path =System.getProperty("user.dir")+"\\src\\main\\resources\\";
         File fileToSave = new File(path + fileName);
         try {
