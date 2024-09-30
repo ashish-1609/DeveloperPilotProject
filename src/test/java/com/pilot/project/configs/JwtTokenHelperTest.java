@@ -32,34 +32,34 @@ class JwtTokenHelperTest {
 
     @Test
     void getUsernameFromToken() {
-        String token = this.jwtTokenHelper.generateToken(userDetails);
-        String usernameFromToken = this.jwtTokenHelper.getUsernameFromToken(token);
+        String token = jwtTokenHelper.generateToken(userDetails);
+        String usernameFromToken = jwtTokenHelper.getUsernameFromToken(token);
         assertNotNull(usernameFromToken);
         assertEquals("test", usernameFromToken);
     }
 
     @Test
     void getExpirationDateFromToken() {
-        String token = this.jwtTokenHelper.generateToken(userDetails);
-        Date expirationDateFromToken = this.jwtTokenHelper.getExpirationDateFromToken(token);
+        String token = jwtTokenHelper.generateToken(userDetails);
+        Date expirationDateFromToken = jwtTokenHelper.getExpirationDateFromToken(token);
         assertNotNull(expirationDateFromToken);
         assertTrue(expirationDateFromToken.after(new Date()));
     }
 
     @Test
     void generateToken() {
-        String token = this.jwtTokenHelper.generateToken(userDetails);
+        String token = jwtTokenHelper.generateToken(userDetails);
         assertNotNull(token);
         assertTrue(token.startsWith("eyJ"));
     }
 
     @Test
     void validateToken() {
-        String token = this.jwtTokenHelper.generateToken(userDetails);
-        String usernameFromToken = this.jwtTokenHelper.getUsernameFromToken(token);
+        String token = jwtTokenHelper.generateToken(userDetails);
+        String usernameFromToken = jwtTokenHelper.getUsernameFromToken(token);
         assertNotNull(usernameFromToken);
         assertEquals("test", usernameFromToken);
         assertEquals(userDetails.getUsername(), usernameFromToken);
-        assertTrue(this.jwtTokenHelper.getExpirationDateFromToken(token).after(new Date()));
+        assertTrue(jwtTokenHelper.getExpirationDateFromToken(token).after(new Date()));
     }
 }

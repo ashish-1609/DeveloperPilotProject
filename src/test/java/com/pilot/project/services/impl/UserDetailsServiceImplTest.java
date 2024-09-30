@@ -38,25 +38,25 @@ class UserDetailsServiceImplTest {
 
     @Test
     void loadUserByUsername_UserExists() {
-        when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-        UserDetails userDetails = this.userDetailsServiceImpl.loadUserByUsername(user.getEmail());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(user.getEmail());
         assertNotNull(userDetails);
         assertEquals(user.getEmail(), userDetails.getUsername());
     }
     @Test
     void loadUserByUsername_UserDoesNotExist() {
-        when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         assertThrows(UsernameNotFoundException.class,this::loadUserByUsernameForTest);
     }
     void loadUserByUsernameForTest() {
-        this.userDetailsServiceImpl.loadUserByUsername(user.getEmail());
+        userDetailsServiceImpl.loadUserByUsername(user.getEmail());
     }
     @Test
     void loadUserByUsername_NullUser() {
-        when(this.userRepository.findByEmail("xyz@gmail.com")).thenReturn(Optional.empty());
+        when(userRepository.findByEmail("xyz@gmail.com")).thenReturn(Optional.empty());
         assertThrows(UsernameNotFoundException.class, this::loadUserByUsernameForTest_NullUser);
     }
     private void loadUserByUsernameForTest_NullUser() {
-        this.userDetailsServiceImpl.loadUserByUsername("xyz@gmail.com");
+        userDetailsServiceImpl.loadUserByUsername("xyz@gmail.com");
     }
 }

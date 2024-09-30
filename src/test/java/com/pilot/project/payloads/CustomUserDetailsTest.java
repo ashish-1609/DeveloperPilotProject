@@ -40,14 +40,14 @@ class CustomUserDetailsTest {
 
     @Test
     void getUsername(){
-        String username = this.customUserDetails.getUsername();
+        String username = customUserDetails.getUsername();
         assertNotNull(username);
         assertEquals(user.getEmail(), username);
     }
 
     @Test
     void getPassword(){
-        String password = this.customUserDetails.getPassword();
+        String password = customUserDetails.getPassword();
         assertNotNull(password);
         assertEquals(user.getPassword(), password);
 

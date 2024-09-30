@@ -42,16 +42,16 @@ class HotelControllerTest {
 
     @Test
     void getAllHotels() {
-        when(this.hotelService.getHotels()).thenReturn(List.of(hotelDTO));
-        ResponseEntity<List<HotelDTO>> response = this.hotelController.getAllHotels();
+        when(hotelService.getHotels()).thenReturn(List.of(hotelDTO));
+        ResponseEntity<List<HotelDTO>> response = hotelController.getAllHotels();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(List.of(hotelDTO), response.getBody());
     }
 
     @Test
     void saveHotel_HotelExist(){
-        when(this.hotelService.existByName(hotelDTO.getName())).thenReturn(true);
-        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO);
+        when(hotelService.existByName(hotelDTO.getName())).thenReturn(true);
+        ResponseEntity<?> responseEntity = hotelController.saveHotel(hotelDTO);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("Hotel already exists with this name: " +hotelDTO.getName(), ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
@@ -59,24 +59,24 @@ class HotelControllerTest {
     @Test
     void saveHotel() {
         ApiResponse apiResponse = new ApiResponse("Hotel Added Successfully");
-        when(this.hotelService.existByName(hotelDTO.getName())).thenReturn(false);
-        when(this.hotelService.saveHotel(hotelDTO)).thenReturn(hotelDTO);
-        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO);
+        when(hotelService.existByName(hotelDTO.getName())).thenReturn(false);
+        when(hotelService.saveHotel(hotelDTO)).thenReturn(hotelDTO);
+        ResponseEntity<?> responseEntity = hotelController.saveHotel(hotelDTO);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }
     @Test
     void saveHotel_InvalidHotel(){
-        ResponseEntity<?> responseEntity = this.hotelController.saveHotel(hotelDTO);
+        ResponseEntity<?> responseEntity = hotelController.saveHotel(hotelDTO);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(List.of("Hotel's name cannot be empty.").toString(),((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 
     @Test
     void deleteHotel() {
-        when(this.hotelService.getHotelById(hotelDTO.getId())).thenReturn(hotelDTO);
-        assertNotNull(this.hotelController.getHotelById(hotelDTO.getId()));
-        ResponseEntity<ApiResponse> apiResponseResponseEntity = this.hotelController.deleteHotel(hotelDTO.getId());
+        when(hotelService.getHotelById(hotelDTO.getId())).thenReturn(hotelDTO);
+        assertNotNull(hotelController.getHotelById(hotelDTO.getId()));
+        ResponseEntity<ApiResponse> apiResponseResponseEntity = hotelController.deleteHotel(hotelDTO.getId());
         assertEquals(HttpStatus.OK, apiResponseResponseEntity.getStatusCode());
         assertEquals("Hotel deleted successfully", ((ApiResponse) Objects.requireNonNull(apiResponseResponseEntity.getBody())).getMessage());
     }
@@ -84,16 +84,16 @@ class HotelControllerTest {
     @Test
     void updateHotel() {
         ApiResponse apiResponse = new ApiResponse("Hotel Updated Successfully");
-        when(this.hotelService.updateHotel(hotelDTO.getId(), hotelDTO)).thenReturn(hotelDTO);
-        ResponseEntity<?> responseEntity = this.hotelController.updateHotel(hotelDTO.getId(), hotelDTO);
+        when(hotelService.updateHotel(hotelDTO.getId(), hotelDTO)).thenReturn(hotelDTO);
+        ResponseEntity<?> responseEntity = hotelController.updateHotel(hotelDTO.getId(), hotelDTO);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }
 
     @Test
     void getHotelById() {
-        when(this.hotelService.getHotelById(hotelDTO.getId())).thenReturn(hotelDTO);
-        ResponseEntity<HotelDTO> responseEntity = this.hotelController.getHotelById(hotelDTO.getId());
+        when(hotelService.getHotelById(hotelDTO.getId())).thenReturn(hotelDTO);
+        ResponseEntity<HotelDTO> responseEntity = hotelController.getHotelById(hotelDTO.getId());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(hotelDTO, responseEntity.getBody());
     }

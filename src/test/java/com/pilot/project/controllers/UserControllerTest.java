@@ -55,9 +55,9 @@ class UserControllerTest {
 
     @Test
     void saveUser_InvalidUser(){
-        when(this.bindingResult.hasErrors()).thenReturn(true);
-        when(this.bindingResult.getFieldError()).thenReturn(new FieldError("user", "email", "Invalid email"));
-        ResponseEntity<?> responseEntity = this.userController.saveUser(userDTO, bindingResult);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldError()).thenReturn(new FieldError("user", "email", "Invalid email"));
+        ResponseEntity<?> responseEntity = userController.saveUser(userDTO);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("Invalid email", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
@@ -66,22 +66,22 @@ class UserControllerTest {
     @Test
     void saveUser_UserExist(){
         userDTO.setEmail("test@email.com");
-        when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(true);
+        when(userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(true);
 
-        ResponseEntity<?> responseEntity = this.userController.saveUser(userDTO, bindingResult);
+        ResponseEntity<?> responseEntity = userController.saveUser(userDTO);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals("User Already Exist.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
-        verify(this.userService, times(1)).isUserExistByEmail(userDTO.getEmail());
+        verify(userService, times(1)).isUserExistByEmail(userDTO.getEmail());
     }
 
     @Test
     void saveUser_validUser() {
-        when(this.bindingResult.hasErrors()).thenReturn(false);
+        when(bindingResult.hasErrors()).thenReturn(false);
         ApiResponse apiResponse = new ApiResponse("User Added Successfully");
-        when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
-        when(this.userService.saveUser(userDTO)).thenReturn(userDTO);
+        when(userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
+        when(userService.saveUser(userDTO)).thenReturn(userDTO);
 
-        ResponseEntity<?> responseEntity= this.userController.saveUser(userDTO, bindingResult);
+        ResponseEntity<?> responseEntity= userController.saveUser(userDTO);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
 
@@ -90,33 +90,33 @@ class UserControllerTest {
     @Test
     void updateUser() {
         ApiResponse apiResponse = new ApiResponse("User Updated Successfully");
-        when(this.userService.updateUser(userDTO.getId(), userDTO)).thenReturn(userDTO);
-        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getId(), userDTO, bindingResult);
+        when(userService.updateUser(userDTO.getId(), userDTO)).thenReturn(userDTO);
+        ResponseEntity<?> responseEntity = userController.updateUser(userDTO.getId(), userDTO);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(apiResponse, responseEntity.getBody());
     }
     @Test
     void updateUser_InvalidUser(){
-        when(this.bindingResult.hasErrors()).thenReturn(true);
-        when(this.bindingResult.getFieldError()).thenReturn(new FieldError("user", "name", "User's name cannot be empty."));
-        ResponseEntity<?> responseEntity = this.userController.updateUser(userDTO.getId(), userDTO, bindingResult);
+        when(bindingResult.hasErrors()).thenReturn(true);
+        when(bindingResult.getFieldError()).thenReturn(new FieldError("user", "name", "User's name cannot be empty."));
+        ResponseEntity<?> responseEntity = userController.updateUser(userDTO.getId(), userDTO);
         assertEquals("User's name cannot be empty.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 
     @Test
     void getAllUsers() {
         List<UserDTO> userDTOs = List.of(userDTO);
-        when(this.userService.getAllUsers()).thenReturn(userDTOs);
-        ResponseEntity<?> responseEntity = this.userController.getAllUsers();
+        when(userService.getAllUsers()).thenReturn(userDTOs);
+        ResponseEntity<?> responseEntity = userController.getAllUsers();
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(userDTOs, responseEntity.getBody());
-        verify(this.userService, times(1)).getAllUsers();
+        verify(userService, times(1)).getAllUsers();
     }
 
     @Test
     void getUserById() {
-        lenient().when(this.userService.getUserByEmail(userDTO.getId())).thenReturn(userDTO);
-        ResponseEntity<UserDTO> responseEntity = this.userController.getUserByEmail(userDTO.getId());
+        lenient().when(userService.getUserByEmail(userDTO.getId())).thenReturn(userDTO);
+        ResponseEntity<UserDTO> responseEntity = userController.getUserByEmail(userDTO.getId());
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
             assertEquals(userDTO, responseEntity.getBody());
         }else{
@@ -125,15 +125,15 @@ class UserControllerTest {
     }
     @Test
     void getUserById_UserNotFound(){
-        lenient().when(this.userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
-        ResponseEntity<UserDTO> responseEntity = this.userController.getUserByEmail(userDTO.getId());
+        lenient().when(userService.isUserExistByEmail(userDTO.getEmail())).thenReturn(false);
+        ResponseEntity<UserDTO> responseEntity = userController.getUserByEmail(userDTO.getId());
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
     }
 
     @Test
     void deleteUser() {
-        ResponseEntity<?> responseEntity = this.userController.deleteUser(userDTO.getId());
-        verify(this.userService, times(1)).deleteUser(userDTO.getId());
+        ResponseEntity<?> responseEntity = userController.deleteUser(userDTO.getId());
+        verify(userService, times(1)).deleteUser(userDTO.getId());
         assertEquals("User deleted Successfully.", ((ApiResponse) Objects.requireNonNull(responseEntity.getBody())).getMessage());
     }
 }

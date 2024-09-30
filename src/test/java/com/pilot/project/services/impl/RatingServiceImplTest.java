@@ -92,13 +92,13 @@ class RatingServiceImplTest {
     @Test
     @Order(1)
     void saveRating_WhenUserIsValid() {
-        when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.ofNullable(user));
-        when(this.hotelRepository.findById(hotel.getId())).thenReturn(Optional.of(hotel));
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.ofNullable(user));
+        when(hotelRepository.findById(hotel.getId())).thenReturn(Optional.of(hotel));
         when(modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
-        when(this.ratingRepository.save(rating)).thenReturn(rating);
-        when(this.modelMapper.map(ratingDTO,Rating.class)).thenReturn(rating);
+        when(ratingRepository.save(rating)).thenReturn(rating);
+        when(modelMapper.map(ratingDTO,Rating.class)).thenReturn(rating);
 
-        RatingDTO ratingDTO1 = this.ratingService.saveRating(user.getEmail(), hotel.getId(), ratingDTO);
+        RatingDTO ratingDTO1 = ratingService.saveRating(user.getEmail(), hotel.getId(), ratingDTO);
         assertNotNull(ratingDTO1);
         assertEquals(ratingDTO.getId(),ratingDTO1.getId());
         assertEquals(ratingDTO.getPoints(),ratingDTO1.getPoints());
@@ -108,7 +108,7 @@ class RatingServiceImplTest {
 
     @Test
     void saveUser_WhenUserNotFound(){
-        when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::saveRating);
     }
     private void saveRating() {
@@ -117,13 +117,13 @@ class RatingServiceImplTest {
     @Test
     @Order(2)
     void updateRating_WhenUserFound() {
-        when(this.ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.of(rating));
-        when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.ofNullable(user));
-        when(this.hotelRepository.findById(hotel.getId())).thenReturn(Optional.of(hotel));
-        when(this.ratingRepository.save(any(Rating.class))).thenReturn(rating);
+        when(ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.of(rating));
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.ofNullable(user));
+        when(hotelRepository.findById(hotel.getId())).thenReturn(Optional.of(hotel));
+        when(ratingRepository.save(any(Rating.class))).thenReturn(rating);
         when(modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
 
-        RatingDTO savedRating = this.ratingService.updateRating(user.getEmail(), hotel.getId(),ratingDTO.getId(), ratingDTO);
+        RatingDTO savedRating = ratingService.updateRating(user.getEmail(), hotel.getId(),ratingDTO.getId(), ratingDTO);
         assertNotNull(savedRating);
         assertEquals(ratingDTO.getId(),savedRating.getId());
         assertEquals(ratingDTO.getPoints(),savedRating.getPoints());
@@ -132,17 +132,17 @@ class RatingServiceImplTest {
     }
     @Test
     void updateRating_WhenRatingNotFound(){
-        when(this.ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.empty());
+        when(ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::updateRating);
     }
     private void updateRating(){
-        this.ratingService.updateRating(userDTO.getEmail(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO);
+        ratingService.updateRating(userDTO.getEmail(), hotelDTO.getId(), ratingDTO.getId(), ratingDTO);
     }
     @Test
     @Order(3)
     void deleteRating() {
-        when(this.ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.of(rating));
-        assertDoesNotThrow(()-> this.ratingService.deleteRating(ratingDTO.getId()));
+        when(ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.of(rating));
+        assertDoesNotThrow(()-> ratingService.deleteRating(ratingDTO.getId()));
         verify(ratingRepository, times(1)).delete(rating);
     }
 
@@ -150,8 +150,8 @@ class RatingServiceImplTest {
     @Order(4)
     void getRatings() {
         List<Rating> ratings = List.of(rating);
-        when(this.ratingRepository.findAll()).thenReturn(ratings);
-        List<RatingDTO> ratingDTOList = this.ratingService.getRatings();
+        when(ratingRepository.findAll()).thenReturn(ratings);
+        List<RatingDTO> ratingDTOList = ratingService.getRatings();
         assertNotNull(ratingDTOList);
         assertEquals(ratingDTOList.size(),ratings.size());
         verify(ratingRepository, times(1)).findAll();
@@ -160,87 +160,87 @@ class RatingServiceImplTest {
     @Test
     @Order(5)
     void getRatingById() {
-        when(this.ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.of(rating));
-        when(this.modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
-        RatingDTO ratingById = this.ratingService.getRatingById(ratingDTO.getId());
+        when(ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.of(rating));
+        when(modelMapper.map(rating,RatingDTO.class)).thenReturn(ratingDTO);
+        RatingDTO ratingById = ratingService.getRatingById(ratingDTO.getId());
         assertNotNull(ratingById);
         assertEquals(ratingDTO.getId(), ratingById.getId());
         verify(ratingRepository, times(1)).findById(ratingDTO.getId());
     }
     @Test
     void getRatingById_WhenRatingNotFound(){
-        when(this.ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.empty());
+        when(ratingRepository.findById(ratingDTO.getId())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::getRatingByIdForTest );
     }
 
     private void getRatingByIdForTest(){
-        this.ratingService.getRatingById(ratingDTO.getId());
+        ratingService.getRatingById(ratingDTO.getId());
     }
 
     @Test
     @Order(6)
     void findAllRatingsByUser() {
          List<Rating> ratings = List.of(rating);
-         when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
-         when(this.ratingRepository.findAllByUser(user)).thenReturn(ratings);
-        List<RatingDTO> allRatingsByUser = this.ratingService.findAllRatingsByUser(userDTO.getEmail());
+         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+         when(ratingRepository.findAllByUser(user)).thenReturn(ratings);
+        List<RatingDTO> allRatingsByUser = ratingService.findAllRatingsByUser(userDTO.getEmail());
         assertNotNull(allRatingsByUser);
         assertEquals(allRatingsByUser.size(),ratings.size());
         verify(ratingRepository, times(1)).findAllByUser(user);
     }
     @Test
     void findAllRatingsByUser_WhenUserNotFound(){
-        when(this.userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class,this::findAllRatingsByUserForTest);
     }
     private void findAllRatingsByUserForTest(){
-        this.ratingService.findAllRatingsByUser(userDTO.getEmail());
+        ratingService.findAllRatingsByUser(userDTO.getEmail());
     }
 
     @Test
     @Order(7)
     void findAllRatingsByHotel() {
         List<Rating> ratings = List.of(rating);
-        when(this.hotelRepository.findById(hotel.getId())).thenReturn(Optional.of(hotel));
-        when(this.ratingRepository.findAllByHotel(hotel)).thenReturn(ratings);
-        List<RatingDTO> allRatingsByHotel = this.ratingService.findAllRatingsByHotel(hotelDTO.getId());
+        when(hotelRepository.findById(hotel.getId())).thenReturn(Optional.of(hotel));
+        when(ratingRepository.findAllByHotel(hotel)).thenReturn(ratings);
+        List<RatingDTO> allRatingsByHotel = ratingService.findAllRatingsByHotel(hotelDTO.getId());
         assertNotNull(allRatingsByHotel);
         assertEquals(allRatingsByHotel.size(),ratings.size());
         verify(ratingRepository, times(1)).findAllByHotel(hotel);
     }
     @Test
     void findAllRatingsByHotel_WhenHotelNotFound(){
-        when(this.hotelRepository.findById(hotel.getId())).thenReturn(Optional.empty());
+        when(hotelRepository.findById(hotel.getId())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class,this::findAllRatingsByHotelForTest);
     }
     private void findAllRatingsByHotelForTest(){
-        this.ratingService.findAllRatingsByHotel(hotelDTO.getId());
+        ratingService.findAllRatingsByHotel(hotelDTO.getId());
     }
 
     @Test
     @Order(8)
     void deleteAllRatingsByUser() {
-        List<Rating> allByUser = this.ratingRepository.findAllByUser(user);
-        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
-        when(this.ratingRepository.findAllByUser(user)).thenReturn(allByUser);
-        assertDoesNotThrow(()-> this.ratingService.deleteAllRatingsByUser(userDTO.getEmail()));
+        List<Rating> allByUser = ratingRepository.findAllByUser(user);
+        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        when(ratingRepository.findAllByUser(user)).thenReturn(allByUser);
+        assertDoesNotThrow(()-> ratingService.deleteAllRatingsByUser(userDTO.getEmail()));
         verify(ratingRepository, times(1)).deleteAll(allByUser);
     }
 
     @Test
     @Order(9)
     void deleteAllRatingsByHotel() {
-        List<Rating> allByHotel = this.ratingRepository.findAllByHotel(hotel);
-        when(this.hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.of(hotel));
-        when(this.ratingRepository.findAllByHotel(hotel)).thenReturn(allByHotel);
-        assertDoesNotThrow(()->this.ratingService.deleteAllRatingsByHotel(hotelDTO.getId()));
+        List<Rating> allByHotel = ratingRepository.findAllByHotel(hotel);
+        when(hotelRepository.findById(hotelDTO.getId())).thenReturn(Optional.of(hotel));
+        when(ratingRepository.findAllByHotel(hotel)).thenReturn(allByHotel);
+        assertDoesNotThrow(()->ratingService.deleteAllRatingsByHotel(hotelDTO.getId()));
         verify(ratingRepository, times(1)).deleteAll(allByHotel);
     }
 
     @Test
     @Order(10)
     void deleteAllRatings() {
-        assertDoesNotThrow(()->this.ratingService.deleteAllRatings());
+        assertDoesNotThrow(()->ratingService.deleteAllRatings());
         verify(ratingRepository, times(1)).deleteAll();
     }
 }

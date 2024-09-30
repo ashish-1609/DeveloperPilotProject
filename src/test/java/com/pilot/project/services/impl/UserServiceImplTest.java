@@ -62,7 +62,7 @@ class UserServiceImplTest {
         when(modelMapper.map(userDTO, User.class)).thenReturn(user);
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
-        UserDTO savedUser = this.userService.saveUser(userDTO);
+        UserDTO savedUser = userService.saveUser(userDTO);
         assertNotNull(savedUser);
         assertEquals(userDTO.getId(), savedUser.getId());
         assertEquals(userDTO.getName(), savedUser.getName());
@@ -75,69 +75,69 @@ class UserServiceImplTest {
     @Test
     @Order(2)
     void updateUser() {
-        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(bCryptPasswordEncoder.encode(userDTO.getPassword())).thenReturn("encoded");
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
-        UserDTO updatedUser = this.userService.updateUser(userDTO.getEmail(), userDTO);
+        UserDTO updatedUser = userService.updateUser(userDTO.getEmail(), userDTO);
         assertNotNull(userDTO);
         assertEquals(userDTO.getEmail(), updatedUser.getEmail());
-        verify(this.userRepository).save(any(User.class));
+        verify(userRepository).save(any(User.class));
 
     }
 
     @Test
     void updateUser_UserNotFound(){
-        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, this::updateUserForTest);
     }
 
     private void updateUserForTest() {
-        this.userService.updateUser(userDTO.getEmail(), userDTO);
+        userService.updateUser(userDTO.getEmail(), userDTO);
     }
 
     @Test
     @Order(3)
     void getUserById() {
-        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
         when(modelMapper.map(user, UserDTO.class)).thenReturn(userDTO);
-        UserDTO userById = this.userService.getUserByEmail(userDTO.getEmail());
+        UserDTO userById = userService.getUserByEmail(userDTO.getEmail());
         assertNotNull(userById);
         assertEquals(userDTO.getEmail(), userById.getEmail());
-        verify(this.userRepository, times(1)).findByEmail(userDTO.getEmail());
+        verify(userRepository, times(1)).findByEmail(userDTO.getEmail());
     }
 
     @Test
     @Order(4)
     void getAllUsers() {
         userList.add(user);
-        when(this.userRepository.findAll()).thenReturn(List.of(user));
-        List<UserDTO> allUsers = this.userService.getAllUsers();
+        when(userRepository.findAll()).thenReturn(List.of(user));
+        List<UserDTO> allUsers = userService.getAllUsers();
         assertNotNull(allUsers);
         assertEquals(userList.size(), allUsers.size());
-        verify(this.userRepository, times(1)).findAll();
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
     @Order(5)
     void deleteUser() {
-        when(this.userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
-        assertDoesNotThrow(() -> this.userService.deleteUser(userDTO.getEmail()));
-        verify(this.userRepository, times(1)).delete(user);
+        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(user));
+        assertDoesNotThrow(() -> userService.deleteUser(userDTO.getEmail()));
+        verify(userRepository, times(1)).delete(user);
     }
 
     @Test
     @Order(6)
     void isUserExistByEmail() {
-        when(this.userRepository.existsByEmail(userDTO.getEmail())).thenReturn(Boolean.TRUE);
-        assertTrue(this.userService.isUserExistByEmail(userDTO.getEmail()));
-        verify(this.userRepository, times(1)).existsByEmail(userDTO.getEmail());
+        when(userRepository.existsByEmail(userDTO.getEmail())).thenReturn(Boolean.TRUE);
+        assertTrue(userService.isUserExistByEmail(userDTO.getEmail()));
+        verify(userRepository, times(1)).existsByEmail(userDTO.getEmail());
     }
 
     @Test
     void isUserExistByUserid(){
-        when(this.userRepository.existsById(userDTO.getId())).thenReturn(Boolean.TRUE);
-        assertTrue(this.userService.isUserExistByUserid(userDTO.getId()));
+        when(userRepository.existsById(userDTO.getId())).thenReturn(Boolean.TRUE);
+        assertTrue(userService.isUserExistByUserid(userDTO.getId()));
     }
 
 }
