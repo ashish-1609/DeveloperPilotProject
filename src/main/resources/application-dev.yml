@@ -3,9 +3,9 @@ spring:
     name: DeveloperPilotProject
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/developerpilotproject
+    url: jdbc:mysql://localhost:3306/developerpilotproject?createDatabaseIfNotExist=true
     username: root
-    password: 00Mishr@
+    password: root
   sql:
     init:
       mode: always
@@ -34,3 +34,6 @@ springdoc:
   swagger-ui:
     csrf:
       enabled: false
+
+server:
+  port: 8090
